@@ -23,8 +23,8 @@ function setPayType(t) {
 
 function autoSplit() {
   const total = parseFloat(document.getElementById('f-amount').value)||0;
-  const cash = parseFloat(document.getElementById('f-cash').value)||0;
-  document.getElementById('f-transfer').value = total>0?Math.max(0,total-cash).toFixed(2):'';
+  document.getElementById('f-cash').value = '';
+  document.getElementById('f-transfer').value = total>0?total.toFixed(2):'';
 }
 
 function syncSplit(changed) {
