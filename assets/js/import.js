@@ -5,12 +5,15 @@ function dragOver(e) { e.preventDefault(); document.getElementById('import-zone'
 function dragLeave(e) { document.getElementById('import-zone').classList.remove('dragover'); }
 function dropFile(e) { e.preventDefault(); document.getElementById('import-zone').classList.remove('dragover'); handleFiles(e.dataTransfer.files); }
 
-function handleFiles(files) {
+async function handleFiles(files) {
   if (!files.length) return;
   pendingImport = [];
   const logEl = document.getElementById('import-log');
   document.getElementById('import-preview').style.display = 'block';
   logEl.innerHTML = '';
+  log(logEl, 'Loading Excel tools...', 'ok');
+  try { await ensureXlsx(); }
+  catch(err) { log(logEl, err.message, 'err'); toast(err.message); return; }
   let totalParsed=0, totalSkipped=0, totalDups=0;
 
   const existingIds = new Set(DB.map(e => e.date+'|'+e.type+'|'+e.client+'|'+e.amount));

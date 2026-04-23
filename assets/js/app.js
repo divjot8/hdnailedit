@@ -7,8 +7,9 @@ function toast(msg) {
 // ── INIT ──────────────────────────────────────
 document.getElementById('f-date').value = today();
 renderConfigBanners();
-setSyncStatus(API_URL?'loading':'disconnected');
+setSyncStatus(API_URL?'connected':'disconnected', API_URL?'Showing cached data · syncing in background':undefined);
 const cached = localStorage.getItem('hd_nails_cache');
 if (cached) { try { DB=JSON.parse(cached); refreshAllViews(); } catch(e){} }
-if (API_URL) loadData(); else hideLoading();
+hideLoading();
+if (API_URL) setTimeout(()=>loadData(true), 0);
 setInterval(()=>{ if(API_URL&&document.visibilityState==='visible') loadData(true); }, 30000);

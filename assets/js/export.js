@@ -3,7 +3,9 @@ function entrySource(e) {
   return e.type === 'Withdrawal' ? 'HDNailedIt' : e.client;
 }
 
-function exportExcel(mode) {
+async function exportExcel(mode) {
+  try { await ensureXlsx(); }
+  catch(err) { toast(err.message); return; }
   const wb = XLSX.utils.book_new();
   const allRows=DB.map(e=>({'Date':fmtDate(e.date),'Type':e.type,'Payment Type':e.payType,'Service':e.service,'Client / Supplier / From':entrySource(e),'Staff / Paid To':e.staff,'Cash ($)':e.cash,'Transfer ($)':e.tf,'Total ($)':e.amount,'Note':e.note,'Month':fmtMonth(e.month)}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(allRows),'Full Ledger');

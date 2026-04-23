@@ -7,8 +7,8 @@
   "theme_color": "#0f0f0f",
   "icons": [
     {
-      "src": "assets/HDNAILEDIT.jpeg",
-      "sizes": "1500x2100",
+      "src": "assets/hdnailedit-icon.jpeg",
+      "sizes": "256x256",
       "type": "image/jpeg"
     }
   ]
