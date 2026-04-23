@@ -1,6 +1,14 @@
 // ── VIEWS ─────────────────────────────────────
 function refreshAllViews() { refreshDashboard(); renderLedger(); renderCashLedger(); renderAccountant(); }
 
+function isRevenueEntry(e) {
+  return e.type === 'Revenue' || e.type === 'Deposit';
+}
+
+function isDepositEntry(e) {
+  return e.payType === 'Deposit' || e.type === 'Deposit';
+}
+
 function fmt(n) {
   const value = Number(n) || 0;
   const sign = value < 0 ? '-' : '';
@@ -12,7 +20,7 @@ function fmtMonth(ym) {
   return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1]+' '+y;
 }
 function typeBadge(t) {
-  const m={Revenue:'badge-revenue',Expense:'badge-expense',Deposit:'badge-deposit',Withdrawal:'badge-withdrawal'};
+  const m={Revenue:'badge-revenue',Deposit:'badge-revenue',Expense:'badge-expense',Withdrawal:'badge-withdrawal'};
   return`<span class="badge ${m[t]||''}">${t}</span>`;
 }
 function staffBadge(s) {
@@ -32,13 +40,13 @@ function refreshDashboard() {
   let hRev=0,hCash=0,hTf=0,hWith=0,dRev=0,dCash=0,dTf=0,dWith=0;
   const monthly={};
   DB.forEach(e=>{
-    const isInc=e.type==='Revenue'||e.type==='Deposit';
+    const isInc=isRevenueEntry(e);
     if(!monthly[e.month])monthly[e.month]={rev:0,exp:0,cash:0,tf:0,count:0};
     monthly[e.month].count++;
     if(isInc){
       totalRev+=e.amount;cashHand+=e.cash;cashBank+=e.tf;
       monthly[e.month].rev+=e.amount;monthly[e.month].cash+=e.cash;monthly[e.month].tf+=e.tf;
-      if(e.type==='Deposit')deps+=e.amount;else{fullTf+=e.tf;fullCash+=e.cash;}
+      if(isDepositEntry(e))deps+=e.amount;else{fullTf+=e.tf;fullCash+=e.cash;}
       if(e.staff==='Harnoor'){hRev+=e.amount;hCash+=e.cash;hTf+=e.tf;}
       if(e.staff==='Dikshi'){dRev+=e.amount;dCash+=e.cash;dTf+=e.tf;}
     }else if(e.type==='Expense'){totalExp+=e.amount;cashHand-=e.cash;cashBank-=e.tf;monthly[e.month].exp+=e.amount;}
@@ -83,7 +91,7 @@ function refreshDashboard() {
 function renderLedger() {
   const tf=document.getElementById('l-filter-type').value, sf=document.getElementById('l-filter-staff').value;
   const pf=document.getElementById('l-filter-pay').value, s=document.getElementById('l-search').value.toLowerCase();
-  const f=DB.filter(e=>(!tf||e.type===tf)&&(!sf||e.staff===sf)&&(!pf||e.payType===pf)&&(!s||(e.client||'').toLowerCase().includes(s)||(e.staff||'').toLowerCase().includes(s)||(e.note||'').toLowerCase().includes(s)));
+  const f=DB.filter(e=>(!tf||(tf==='Revenue'?isRevenueEntry(e):e.type===tf))&&(!sf||e.staff===sf)&&(!pf||e.payType===pf||(pf==='Deposit'&&e.type==='Deposit'))&&(!s||(e.client||'').toLowerCase().includes(s)||(e.staff||'').toLowerCase().includes(s)||(e.note||'').toLowerCase().includes(s)));
   const tbody=document.getElementById('ledger-body');
   if(!f.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><div class="es-text">No entries match filters</div></div></td></tr>';document.getElementById('ledger-count').textContent='';return;}
   tbody.innerHTML=f.map(e=>`<tr>
@@ -93,7 +101,7 @@ function renderLedger() {
     <td><strong>${partyText(e)}</strong></td><td>${staffBadge(e.staff)}</td>
     <td class="td-right td-mono">${e.cash>0?fmt(e.cash):'<span class="text-muted">—</span>'}</td>
     <td class="td-right td-mono">${e.tf>0?fmt(e.tf):'<span class="text-muted">—</span>'}</td>
-    <td class="td-right td-mono"><strong class="${amountClass(['Revenue','Deposit'].includes(e.type))}">${['Revenue','Deposit'].includes(e.type)?'+':'-'}${fmt(e.amount)}</strong></td>
+    <td class="td-right td-mono"><strong class="${amountClass(isRevenueEntry(e))}">${isRevenueEntry(e)?'+':'-'}${fmt(e.amount)}</strong></td>
     <td class="note-cell">${e.note||''}</td>
     <td><button class="del-btn" onclick="deleteEntry('${e.id}')">×</button></td>
   </tr>`).join('');
@@ -103,11 +111,11 @@ function renderLedger() {
 function renderCashLedger() {
   const sf=document.getElementById('c-filter-staff').value, s=document.getElementById('c-search').value.toLowerCase();
   const ce=DB.filter(e=>e.cash>0&&(!sf||e.staff===sf)&&(!s||(e.client||'').toLowerCase().includes(s)||(e.staff||'').toLowerCase().includes(s)||(e.note||'').toLowerCase().includes(s)));
-  let ci=0,co=0; ce.forEach(e=>{ if(['Revenue','Deposit'].includes(e.type))ci+=e.cash;else co+=e.cash; });
+  let ci=0,co=0; ce.forEach(e=>{ if(isRevenueEntry(e))ci+=e.cash;else co+=e.cash; });
   document.getElementById('cash-in-total').textContent=fmt(ci);
   document.getElementById('cash-out-total').textContent=fmt(co);
   document.getElementById('cash-body').innerHTML=ce.length
-    ?ce.map(e=>`<tr><td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td><td class="text-secondary">${e.service==='-'?'—':e.service}</td><td>${partyText(e)}</td><td>${staffBadge(e.staff)}</td><td class="td-right td-mono"><strong class="${amountClass(['Revenue','Deposit'].includes(e.type))}">${['Revenue','Deposit'].includes(e.type)?'+':'-'}${fmt(e.cash)}</strong></td><td class="note-cell">${e.note||''}</td></tr>`).join('')
+    ?ce.map(e=>`<tr><td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td><td class="text-secondary">${e.service==='-'?'—':e.service}</td><td>${partyText(e)}</td><td>${staffBadge(e.staff)}</td><td class="td-right td-mono"><strong class="${amountClass(isRevenueEntry(e))}">${isRevenueEntry(e)?'+':'-'}${fmt(e.cash)}</strong></td><td class="note-cell">${e.note||''}</td></tr>`).join('')
     :'<tr><td colspan="7"><div class="empty-state"><div class="es-text">No cash transactions</div></div></td></tr>';
 }
 
@@ -115,7 +123,7 @@ function renderAccountant() {
   let tfR=0,cR=0,tR=0,tE=0; const monthly={};
   DB.forEach(e=>{
     if(!monthly[e.month])monthly[e.month]={rev:0,dep:0,exp:0,net:0,h:0,d:0};
-    if(['Revenue','Deposit'].includes(e.type)){tfR+=e.tf;cR+=e.cash;tR+=e.amount;if(e.type==='Revenue')monthly[e.month].rev+=e.amount;else monthly[e.month].dep+=e.amount;if(e.staff==='Harnoor')monthly[e.month].h+=e.amount;if(e.staff==='Dikshi')monthly[e.month].d+=e.amount;}
+    if(isRevenueEntry(e)){tfR+=e.tf;cR+=e.cash;tR+=e.amount;if(isDepositEntry(e))monthly[e.month].dep+=e.amount;else monthly[e.month].rev+=e.amount;if(e.staff==='Harnoor')monthly[e.month].h+=e.amount;if(e.staff==='Dikshi')monthly[e.month].d+=e.amount;}
     else if(e.type==='Expense'){tE+=e.amount;monthly[e.month].exp+=e.amount;}
     monthly[e.month].net=monthly[e.month].rev+monthly[e.month].dep-monthly[e.month].exp;
   });

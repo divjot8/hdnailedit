@@ -105,7 +105,7 @@ function parseHDSheet(rows, sheetName, existingIds, logEl) {
         // Extract deposit amount
         const match = feeStr.match(/\$?\s*([\d]+(?:\.\d+)?)/);
         amount = match ? parseFloat(match[1]) : 20;
-        type = 'Deposit';
+        type = 'Revenue';
         payType = 'Deposit';
       } else {
         // Try to parse amount

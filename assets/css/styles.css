@@ -220,7 +220,7 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(180deg,#fbfaf8 
   .metric-grid-4{grid-template-columns:1fr 1fr}
   .form-grid{grid-template-columns:1fr}
   .form-card{padding:20px 16px;max-width:none}
-  .type-tabs{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+  .type-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
   .amount-split{grid-template-columns:1fr}
   .filter-bar{display:grid;grid-template-columns:1fr 1fr}
   .filter-bar .form-select,.filter-bar .form-input{width:100%;max-width:none;min-width:0}

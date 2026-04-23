@@ -92,7 +92,7 @@
       <div class="dash-block-header">Income breakdown</div>
       <div class="dash-row"><span class="dr-label">Full payments (transfer)</span><span class="dr-val pos" id="d-full-tf">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Full payments (cash)</span><span class="dr-val pos" id="d-full-cash">$0.00</span></div>
-      <div class="dash-row"><span class="dr-label">Deposits held</span><span class="dr-val pos" id="d-deps">$0.00</span></div>
+      <div class="dash-row"><span class="dr-label">Deposit revenue</span><span class="dr-val pos" id="d-deps">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Expenses paid</span><span class="dr-val neg" id="d-exp-neg">$0.00</span></div>
       <div class="dash-row total"><span class="dr-label">Net</span><span class="dr-val" id="d-net">$0.00</span></div>
     </div>
@@ -117,14 +117,13 @@
 
 <!-- ═══ ENTRY FORM ═══ -->
 <div id="page-entry" class="page">
-  <div class="page-header"><div class="page-title">Add Entry</div><div class="page-subtitle">Log revenue, expenses, deposits or withdrawals</div></div>
+  <div class="page-header"><div class="page-title">Add Entry</div><div class="page-subtitle">Log revenue, expenses or withdrawals</div></div>
   <div id="config-banner-entry"></div>
   <div id="sync-bar-entry"></div>
   <div class="form-card">
     <div class="type-tabs">
       <button class="type-tab active" onclick="setEntryType('Revenue')">Revenue</button>
       <button class="type-tab" onclick="setEntryType('Expense')">Expense</button>
-      <button class="type-tab" onclick="setEntryType('Deposit')">Deposit</button>
       <button class="type-tab" onclick="setEntryType('Withdrawal')">Withdrawal</button>
     </div>
     <div class="form-grid">
@@ -153,7 +152,7 @@
 <div id="page-ledger" class="page">
   <div class="page-header"><div class="page-title">Full Ledger</div><div class="page-subtitle">All transactions</div></div>
   <div class="filter-bar">
-    <select class="form-select" id="l-filter-type" onchange="renderLedger()"><option value="">All types</option><option>Revenue</option><option>Expense</option><option>Deposit</option><option>Withdrawal</option></select>
+    <select class="form-select" id="l-filter-type" onchange="renderLedger()"><option value="">All types</option><option>Revenue</option><option>Expense</option><option>Withdrawal</option></select>
     <select class="form-select" id="l-filter-staff" onchange="renderLedger()"><option value="">All staff</option><option>Harnoor</option><option>Dikshi</option></select>
     <select class="form-select" id="l-filter-pay" onchange="renderLedger()"><option value="">All payments</option><option value="Full Payment">Full payment</option><option value="Deposit">Deposit</option></select>
     <input type="text" class="form-input" id="l-search" placeholder="Search client..." oninput="renderLedger()">
@@ -208,7 +207,7 @@
       <div>✓ Your existing HD spreadsheet format (date, service, client, fee, method columns)</div>
       <div>✓ Revenue rows (Gel x, BIAB, infills, removals, press ons etc.)</div>
       <div>✓ Expense rows (supplies, equipment)</div>
-      <div>✓ Deposit rows (recognises "DEPOSIT" in fee column)</div>
+      <div>✓ Deposit payments counted as revenue</div>
       <div>✓ Harnoor / Dikshi staff split from the last column</div>
       <div>✓ Cash vs transfer detection from fee method column</div>
       <div>✓ Mixed payments (e.g. "$10 transfer, $50 cash")</div>

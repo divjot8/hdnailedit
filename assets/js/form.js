@@ -1,8 +1,8 @@
 // ── FORM ──────────────────────────────────────
 function setEntryType(t) {
   currentType = t;
-  document.querySelectorAll('.type-tab').forEach((b,i) => b.classList.toggle('active',['Revenue','Expense','Deposit','Withdrawal'][i]===t));
-  const si = ['Revenue','Deposit'].includes(t);
+  document.querySelectorAll('.type-tab').forEach((b,i) => b.classList.toggle('active',['Revenue','Expense','Withdrawal'][i]===t));
+  const si = t==='Revenue';
   const isWithdrawal = t==='Withdrawal';
   document.getElementById('fg-staff').style.display   = si||isWithdrawal?'':'none';
   document.querySelector('#fg-staff .form-label').textContent = isWithdrawal?'Paid to':'Staff';
@@ -11,7 +11,6 @@ function setEntryType(t) {
   document.getElementById('fg-paytype').style.display = si?'':'none';
   document.getElementById('client-label').textContent = t==='Expense'?'Supplier':'Client';
   document.getElementById('f-client').placeholder = t==='Expense'?'Supplier name':t==='Withdrawal'?'e.g. Harnoor personal':'Client name';
-  if (t==='Deposit') { document.getElementById('f-amount').value=20; document.getElementById('f-cash').value=''; }
   autoSplit();
 }
 
