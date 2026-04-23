@@ -1,7 +1,8 @@
 // ═══════════════════════════════════════════
-// CONFIG — paste your Web App URL here
+// CONFIG — https://script.google.com/macros/s/AKfycbzxZ3HErNcSOxHK5HHhGVejZKv_np5IxNB9nd3IYweidPP2U7CCD_gSCzEQ_92sCEguJQ/exec
 // ═══════════════════════════════════════════
-let API_URL = localStorage.getItem('hd_api_url') || 'https://script.google.com/macros/s/AKfycbzxZ3HErNcSOxHK5HHhGVejZKv_np5IxNB9nd3IYweidPP2U7CCD_gSCzEQ_92sCEguJQ/exec';
+const API = 'https://script.google.com/macros/s/AKfycbzxZ3HErNcSOxHK5HHhGVejZKv_np5IxNB9nd3IYweidPP2U7CCD_gSCzEQ_92sCEguJQ/exec'
+let API_URL = localStorage.getItem('hd_api_url') || API;
 // ═══════════════════════════════════════════
 
 let DB = [];
@@ -10,6 +11,19 @@ let currentType = 'Revenue';
 let currentPayType = 'Full Payment';
 let xlsxLoadPromise = null;
 const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+function normalizeMonthKey(monthValue, dateValue) {
+  const monthText = typeof monthValue === 'string' ? monthValue.trim() : '';
+  if (/^\d{4}-\d{2}$/.test(monthText)) return monthText;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(monthText)) return monthText.slice(0, 7);
+
+  const dateText = typeof dateValue === 'string' ? dateValue.trim() : '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) return dateText.slice(0, 7);
+
+  const parsed = new Date(monthValue);
+  if (Number.isNaN(parsed.getTime())) return '';
+  return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}`;
+}
 
 function ensureXlsx() {
   if (window.XLSX) return Promise.resolve(window.XLSX);

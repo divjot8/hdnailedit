@@ -16,8 +16,11 @@ function fmt(n) {
 }
 function fmtDate(d) { if(!d)return''; const[y,m,day]=d.split('-'); return`${day}/${m}/${y}`; }
 function fmtMonth(ym) {
-  if(!ym)return''; const[y,m]=ym.split('-');
-  return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1]+' '+y;
+  const normalized = normalizeMonthKey(ym);
+  if(!normalized)return'';
+  const[y,m]=normalized.split('-');
+  const label=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m,10)-1];
+  return label?`${label} ${y}`:normalized;
 }
 function typeBadge(t) {
   const m={Revenue:'badge-revenue',Deposit:'badge-revenue',Expense:'badge-expense',Withdrawal:'badge-withdrawal'};
@@ -41,15 +44,17 @@ function refreshDashboard() {
   const monthly={};
   DB.forEach(e=>{
     const isInc=isRevenueEntry(e);
-    if(!monthly[e.month])monthly[e.month]={rev:0,exp:0,cash:0,tf:0,count:0};
-    monthly[e.month].count++;
+    const monthKey = normalizeMonthKey(e.month, e.date);
+    if(!monthKey)return;
+    if(!monthly[monthKey])monthly[monthKey]={rev:0,exp:0,cash:0,tf:0,count:0};
+    monthly[monthKey].count++;
     if(isInc){
       totalRev+=e.amount;cashHand+=e.cash;cashBank+=e.tf;
-      monthly[e.month].rev+=e.amount;monthly[e.month].cash+=e.cash;monthly[e.month].tf+=e.tf;
+      monthly[monthKey].rev+=e.amount;monthly[monthKey].cash+=e.cash;monthly[monthKey].tf+=e.tf;
       if(isDepositEntry(e))deps+=e.amount;else{fullTf+=e.tf;fullCash+=e.cash;}
       if(e.staff==='Harnoor'){hRev+=e.amount;hCash+=e.cash;hTf+=e.tf;}
       if(e.staff==='Dikshi'){dRev+=e.amount;dCash+=e.cash;dTf+=e.tf;}
-    }else if(e.type==='Expense'){totalExp+=e.amount;cashHand-=e.cash;cashBank-=e.tf;monthly[e.month].exp+=e.amount;}
+    }else if(e.type==='Expense'){totalExp+=e.amount;cashHand-=e.cash;cashBank-=e.tf;monthly[monthKey].exp+=e.amount;}
     else if(e.type==='Withdrawal'){
       totalWith+=e.amount;cashHand-=e.cash;cashBank-=e.tf;
       if(e.staff==='Harnoor')hWith+=e.amount;
@@ -122,10 +127,12 @@ function renderCashLedger() {
 function renderAccountant() {
   let tfR=0,cR=0,tR=0,tE=0; const monthly={};
   DB.forEach(e=>{
-    if(!monthly[e.month])monthly[e.month]={rev:0,dep:0,exp:0,net:0,h:0,d:0};
-    if(isRevenueEntry(e)){tfR+=e.tf;cR+=e.cash;tR+=e.amount;if(isDepositEntry(e))monthly[e.month].dep+=e.amount;else monthly[e.month].rev+=e.amount;if(e.staff==='Harnoor')monthly[e.month].h+=e.amount;if(e.staff==='Dikshi')monthly[e.month].d+=e.amount;}
-    else if(e.type==='Expense'){tE+=e.amount;monthly[e.month].exp+=e.amount;}
-    monthly[e.month].net=monthly[e.month].rev+monthly[e.month].dep-monthly[e.month].exp;
+    const monthKey = normalizeMonthKey(e.month, e.date);
+    if(!monthKey)return;
+    if(!monthly[monthKey])monthly[monthKey]={rev:0,dep:0,exp:0,net:0,h:0,d:0};
+    if(isRevenueEntry(e)){tfR+=e.tf;cR+=e.cash;tR+=e.amount;if(isDepositEntry(e))monthly[monthKey].dep+=e.amount;else monthly[monthKey].rev+=e.amount;if(e.staff==='Harnoor')monthly[monthKey].h+=e.amount;if(e.staff==='Dikshi')monthly[monthKey].d+=e.amount;}
+    else if(e.type==='Expense'){tE+=e.amount;monthly[monthKey].exp+=e.amount;}
+    monthly[monthKey].net=monthly[monthKey].rev+monthly[monthKey].dep-monthly[monthKey].exp;
   });
   document.getElementById('acc-tf-rev').textContent=fmt(tfR);document.getElementById('acc-cash-rev').textContent=fmt(cR);
   document.getElementById('acc-total-rev').textContent=fmt(tR);document.getElementById('acc-total-exp').textContent=fmt(tE);
