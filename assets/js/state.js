@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════
 // CONFIG — paste your Web App URL here
 // ═══════════════════════════════════════════
-let API_URL = localStorage.getItem('hd_api_url') || '';
+let API_URL = localStorage.getItem('hd_api_url') || 'https://script.google.com/macros/s/AKfycbzxZ3HErNcSOxHK5HHhGVejZKv_np5IxNB9nd3IYweidPP2U7CCD_gSCzEQ_92sCEguJQ/exec';
 // ═══════════════════════════════════════════
 
 let DB = [];
