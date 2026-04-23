@@ -12,200 +12,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --black: #0f0f0f; --black-soft: #1c1c1c; --black-muted: #2e2e2e;
-  --beige: #f5f0e8; --beige-dark: #ede6d6; --beige-mid: #e8dfc8;
-  --silver: #c8c4bc; --silver-light: #e8e6e2; --silver-mid: #b0aca4;
-  --pink: #d4878a; --pink-light: #f0dada; --pink-pale: #faf2f2; --pink-dark: #a85c5f;
-  --white: #fefefe;
-  --text-primary: #0f0f0f; --text-secondary: #5a5650; --text-muted: #9a958e;
-  --border: rgba(15,15,15,0.12); --border-strong: rgba(15,15,15,0.22);
-  --radius: 2px; --radius-lg: 4px;
-  --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{height:100%}
-body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-primary);height:100%;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.app{display:flex;height:100vh;height:100dvh;overflow:hidden}
-
-/* ── SIDEBAR ── */
-.sidebar{width:220px;min-width:220px;background:var(--black);display:flex;flex-direction:column;overflow-y:auto;padding-top:var(--safe-top)}
-.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.08)}
-.logo-mark{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--beige);letter-spacing:0.04em;line-height:1}
-.logo-sub{font-size:10px;letter-spacing:0.2em;color:var(--silver-mid);text-transform:uppercase;margin-top:4px}
-.sidebar-nav{padding:16px 0;flex:1}
-.nav-section-label{font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:10px 24px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 24px;cursor:pointer;color:rgba(255,255,255,0.5);font-size:13px;transition:all 0.15s;border-left:2px solid transparent;user-select:none}
-.nav-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04)}
-.nav-item.active{color:var(--beige);border-left-color:var(--pink);background:rgba(212,135,138,0.08)}
-.nav-icon{width:16px;height:16px;opacity:0.7;flex-shrink:0}
-.nav-item.active .nav-icon{opacity:1}
-.sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.08);padding-bottom:calc(16px + var(--safe-bottom))}
-.balance-pill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:12px 14px}
-.bp-label{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px}
-.bp-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--beige)}
-
-/* ── MAIN ── */
-.main{flex:1;overflow-y:auto;background:var(--beige)}
-.page{display:none;padding:36px 44px;min-height:100%;padding-bottom:calc(36px + var(--safe-bottom))}
-.page.active{display:block}
-.page-header{margin-bottom:32px}
-.page-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:-0.01em;color:var(--black);line-height:1.1}
-.page-subtitle{font-size:13px;color:var(--text-muted);margin-top:5px}
-
-/* ── SYNC/CONFIG ── */
-.sync-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--white);border:1px solid var(--border);margin-bottom:24px;font-size:12px}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--silver);flex-shrink:0}
-.sync-dot.connected{background:#4a7c4e}
-.sync-dot.error{background:var(--pink-dark)}
-.sync-dot.loading{background:#c9a96e;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.sync-text{flex:1;color:var(--text-secondary)}
-.sync-btn{background:none;border:1px solid var(--border-strong);padding:5px 12px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-secondary);border-radius:var(--radius)}
-.sync-btn:hover{background:var(--beige-dark)}
-.config-banner{background:#fdf3e3;border:1px solid #e8c87a;padding:16px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:14px}
-.cb-icon{font-size:18px;flex-shrink:0;margin-top:1px}
-.cb-body{flex:1}
-.cb-title{font-size:13px;font-weight:500;color:#7a5200;margin-bottom:4px}
-.cb-text{font-size:12px;color:#9a6c2a;line-height:1.6}
-.cb-input{width:100%;margin-top:10px;padding:8px 10px;border:1px solid #e8c87a;background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;border-radius:var(--radius);outline:none}
-.cb-input:focus{border-color:#c9a96e}
-
-/* ── METRICS ── */
-.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
-.metric-grid-2{grid-template-columns:repeat(2,1fr)}
-.metric-grid-4{grid-template-columns:repeat(4,1fr)}
-.metric-card{background:var(--white);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden}
-.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--silver-light)}
-.metric-card.pink::before{background:var(--pink)}
-.metric-card.black::before{background:var(--black)}
-.metric-card.silver::before{background:var(--silver-mid)}
-.mc-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
-.mc-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--black);line-height:1}
-.mc-value.positive{color:#4a7c4e}
-.mc-value.negative{color:var(--pink-dark)}
-.mc-sub{font-size:11px;color:var(--text-muted);margin-top:5px}
-
-/* ── SECTION ── */
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.section-title{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-secondary);font-weight:500}
-
-/* ── TABLES ── */
-.table-wrap{background:var(--white);border:1px solid var(--border);overflow:hidden;overflow-x:auto}
-.data-table{width:100%;border-collapse:collapse;font-size:13px}
-.data-table th{background:var(--black);color:rgba(255,255,255,0.7);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;padding:12px 14px;text-align:left;white-space:nowrap}
-.data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-primary);vertical-align:middle}
-.data-table tr:last-child td{border-bottom:none}
-.data-table tr:hover td{background:var(--beige)}
-.td-right{text-align:right;font-variant-numeric:tabular-nums}
-.td-mono{font-size:12px}
-.badge{display:inline-block;padding:3px 8px;font-size:10px;letter-spacing:0.06em;font-weight:500;border-radius:1px}
-.badge-revenue{background:#e8f4ea;color:#3a6b3e}
-.badge-expense{background:var(--pink-pale);color:var(--pink-dark)}
-.badge-deposit{background:#fdf3e3;color:#9a6c2a}
-.badge-withdrawal{background:var(--silver-light);color:var(--text-secondary)}
-.badge-full{background:var(--beige-mid);color:var(--black-muted)}
-.badge-harnoor{background:var(--pink-pale);color:var(--pink-dark)}
-.badge-dikshi{background:#e8f0fc;color:#2b5baa}
-
-/* ── FORM ── */
-.form-card{background:var(--white);border:1px solid var(--border);padding:28px 32px;max-width:620px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.form-full{grid-column:1/-1}
-.form-group{display:flex;flex-direction:column;gap:5px}
-.form-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-secondary);font-weight:500}
-.form-input,.form-select{padding:9px 11px;border:1px solid var(--border-strong);background:var(--beige);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-primary);border-radius:var(--radius);transition:border-color 0.15s,background 0.15s;-webkit-appearance:none;appearance:none;outline:none}
-.form-input:focus,.form-select:focus{border-color:var(--black);background:var(--white)}
-.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239a958e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;cursor:pointer}
-.type-tabs{display:flex;margin-bottom:24px;border:1px solid var(--border-strong);overflow:hidden}
-.type-tab{flex:1;padding:9px 6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:none;background:var(--beige);color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;border-right:1px solid var(--border-strong)}
-.type-tab:last-child{border-right:none}
-.type-tab:hover{background:var(--beige-dark);color:var(--text-secondary)}
-.type-tab.active{background:var(--black);color:var(--beige)}
-.pay-toggle{display:flex;gap:8px}
-.pay-btn{flex:1;padding:9px;font-size:12px;border:1px solid var(--border-strong);background:var(--beige);color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;border-radius:var(--radius)}
-.pay-btn.active{background:var(--black);color:var(--beige);border-color:var(--black)}
-.amount-split{background:var(--beige-dark);border:1px solid var(--border);padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;border-radius:var(--radius)}
-.amount-split-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
-.btn-primary{background:var(--black);color:var(--beige);border:none;padding:12px 26px;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:all 0.15s;border-radius:var(--radius)}
-.btn-primary:hover{background:var(--black-muted)}
-.btn-primary:disabled{opacity:0.5;cursor:not-allowed}
-.btn-secondary{background:transparent;color:var(--text-secondary);border:1px solid var(--border-strong);padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:all 0.15s;border-radius:var(--radius)}
-.btn-secondary:hover{background:var(--beige-dark);border-color:var(--black);color:var(--black)}
-.btn-pink{background:var(--pink);color:var(--white);border:none;padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:all 0.15s;border-radius:var(--radius)}
-.btn-pink:hover{background:var(--pink-dark)}
-.btn-row{display:flex;gap:10px;margin-top:24px;align-items:center;flex-wrap:wrap}
-.filter-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.filter-bar .form-select,.filter-bar .form-input{width:auto;flex:1;min-width:110px;max-width:170px;padding:7px 10px;font-size:12px}
-.filter-bar .form-input{max-width:200px}
-.dash-split{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
-.dash-block{background:var(--white);border:1px solid var(--border)}
-.dash-block-header{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--black-soft);color:rgba(255,255,255,0.8);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;font-weight:500}
-.dash-row{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px}
-.dash-row:last-child{border-bottom:none}
-.dash-row.total{background:var(--beige);font-weight:500}
-.dr-label{color:var(--text-secondary)}
-.dr-val{font-variant-numeric:tabular-nums;font-weight:500}
-.dr-val.pos{color:#4a7c4e} .dr-val.neg{color:var(--pink-dark)}
-.dr-val.harnoor{color:var(--pink-dark)} .dr-val.dikshi{color:#2b5baa}
-.monthly-table-wrap{background:var(--white);border:1px solid var(--border);margin-bottom:28px;overflow-x:auto}
-.export-bar{display:flex;gap:10px;align-items:center;padding:12px 16px;background:var(--beige-dark);border:1px solid var(--border);margin-bottom:20px}
-.export-bar .eb-label{font-size:12px;color:var(--text-secondary);flex:1}
-.del-btn{background:none;border:none;cursor:pointer;color:var(--silver);font-size:16px;padding:4px;transition:color 0.15s;line-height:1}
-.del-btn:hover{color:var(--pink-dark)}
-.empty-state{text-align:center;padding:48px 24px;color:var(--text-muted)}
-.empty-state .es-text{font-size:13px}
-
-/* ── IMPORT PAGE ── */
-.import-zone{border:2px dashed var(--border-strong);padding:48px 24px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--white);border-radius:var(--radius-lg)}
-.import-zone:hover,.import-zone.dragover{border-color:var(--pink);background:var(--pink-pale)}
-.import-zone .iz-icon{font-size:36px;margin-bottom:12px;opacity:0.4}
-.import-zone .iz-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--black);margin-bottom:6px}
-.import-zone .iz-sub{font-size:12px;color:var(--text-muted);line-height:1.6}
-.import-zone input[type=file]{display:none}
-.preview-table-wrap{background:var(--white);border:1px solid var(--border);margin-top:24px;overflow-x:auto;max-height:400px;overflow-y:auto}
-.import-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
-.istat{background:var(--white);border:1px solid var(--border);padding:14px 16px}
-.istat-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
-.istat-val{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--black)}
-.import-log{background:var(--black);color:rgba(255,255,255,0.7);font-family:monospace;font-size:11px;padding:16px;margin-top:12px;max-height:200px;overflow-y:auto;border-radius:var(--radius);line-height:1.7}
-.import-log .log-ok{color:#6dbb6d}
-.import-log .log-warn{color:#f0b03a}
-.import-log .log-err{color:#e87070}
-.progress-bar{height:4px;background:var(--beige-dark);margin:12px 0;border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:var(--pink);transition:width 0.3s;border-radius:2px}
-
-/* ── LOADING ── */
-.loading-overlay{position:fixed;inset:0;background:rgba(245,240,232,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px)}
-.loading-overlay.hidden{display:none}
-.loading-logo{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:var(--black);margin-bottom:20px}
-.loading-bar{width:120px;height:1px;background:var(--silver-light);position:relative;overflow:hidden}
-.loading-bar::after{content:'';position:absolute;left:-40%;width:40%;height:100%;background:var(--pink);animation:slide 1s ease-in-out infinite}
-@keyframes slide{to{left:100%}}
-.loading-text{margin-top:16px;font-size:12px;letter-spacing:0.1em;color:var(--text-muted)}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:calc(28px + var(--safe-bottom));right:28px;background:var(--black);color:var(--beige);padding:13px 18px;font-size:13px;border-left:3px solid var(--pink);z-index:1000;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;max-width:320px}
-.toast.show{opacity:1;transform:translateY(0)}
-
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--silver);border-radius:2px}
-
-@media(max-width:860px){
-  .sidebar{width:60px;min-width:60px}
-  .sidebar-logo .logo-mark{font-size:18px}
-  .sidebar-logo .logo-sub,.nav-section-label,.nav-item span,.sidebar-bottom{display:none}
-  .nav-item{justify-content:center;padding:12px}
-  .page{padding:20px 18px}
-  .metric-grid{grid-template-columns:1fr 1fr}
-  .metric-grid-4{grid-template-columns:1fr 1fr}
-  .form-grid{grid-template-columns:1fr}
-  .dash-split{grid-template-columns:1fr}
-  .import-stats{grid-template-columns:1fr 1fr}
-}
-</style>
+<link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
@@ -231,7 +38,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
       <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       <span>Add Entry</span>
     </div>
-    <div class="nav-section-label" style="margin-top:6px">Records</div>
+    <div class="nav-section-label nav-section-spaced">Records</div>
     <div class="nav-item" onclick="nav('ledger')">
       <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg>
       <span>Ledger</span>
@@ -244,7 +51,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
       <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
       <span>Accountant</span>
     </div>
-    <div class="nav-section-label" style="margin-top:6px">Tools</div>
+    <div class="nav-section-label nav-section-spaced">Tools</div>
     <div class="nav-item" onclick="nav('import')">
       <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       <span>Import Data</span>
@@ -274,7 +81,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
     <div class="metric-card silver"><div class="mc-label">Total in Business</div><div class="mc-value" id="m-total-biz">$0.00</div><div class="mc-sub">Cash + bank</div></div>
     <div class="metric-card"><div class="mc-label">Withdrawals</div><div class="mc-value" id="m-withdrawals">$0.00</div><div class="mc-sub">Personal transfers</div></div>
   </div>
-  <div class="metric-grid" style="margin-bottom:32px">
+  <div class="metric-grid metric-grid-section">
     <div class="metric-card pink"><div class="mc-label">Total Revenue</div><div class="mc-value positive" id="m-total-rev">$0.00</div><div class="mc-sub">Incl. deposits</div></div>
     <div class="metric-card"><div class="mc-label">Total Expenses</div><div class="mc-value negative" id="m-total-exp">$0.00</div><div class="mc-sub">Supplies & costs</div></div>
     <div class="metric-card black"><div class="mc-label">Net Profit</div><div class="mc-value" id="m-net-profit">$0.00</div><div class="mc-sub">Revenue − expenses</div></div>
@@ -293,9 +100,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
       <div class="dash-row"><span class="dr-label">Harnoor — Revenue</span><span class="dr-val harnoor" id="d-h-rev">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Harnoor — Cash</span><span class="dr-val harnoor" id="d-h-cash">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Harnoor — Transfer</span><span class="dr-val harnoor" id="d-h-tf">$0.00</span></div>
-      <div class="dash-row" style="border-top:2px solid var(--border)"><span class="dr-label">Dikshi — Revenue</span><span class="dr-val dikshi" id="d-d-rev">$0.00</span></div>
+      <div class="dash-row"><span class="dr-label">Withdrawn to Harnoor</span><span class="dr-val harnoor" id="d-h-with">$0.00</span></div>
+      <div class="dash-row dash-row-divider"><span class="dr-label">Dikshi — Revenue</span><span class="dr-val dikshi" id="d-d-rev">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Dikshi — Cash</span><span class="dr-val dikshi" id="d-d-cash">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Dikshi — Transfer</span><span class="dr-val dikshi" id="d-d-tf">$0.00</span></div>
+      <div class="dash-row"><span class="dr-label">Withdrawn to Dikshi</span><span class="dr-val dikshi" id="d-d-with">$0.00</span></div>
     </div>
   </div>
   <div class="section-header"><div class="section-title">Monthly summary</div></div>
@@ -319,7 +128,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
     </div>
     <div class="form-grid">
       <div class="form-group"><label class="form-label">Date</label><input type="date" id="f-date" class="form-input"></div>
-      <div class="form-group" id="fg-staff"><label class="form-label">Staff</label><select id="f-staff" class="form-select"><option>Harnoor</option><option>Dikshi</option></select></div>
+      <div class="form-group" id="fg-staff"><label class="form-label">Staff</label><select id="f-staff" class="form-select" onchange="syncWithdrawalParties('staff')"><option>Harnoor</option><option>Dikshi</option></select></div>
+      <div class="form-group" id="fg-withdrawal-from"><label class="form-label">Paid from</label><select id="f-withdrawal-from" class="form-select" onchange="syncWithdrawalParties('from')"><option>Dikshi</option><option>Harnoor</option></select></div>
       <div class="form-group" id="fg-service"><label class="form-label">Service</label><select id="f-service" class="form-select"><option>Gel x</option><option>BIAB</option><option>BIAB infill</option><option>Gel x infill</option><option>Removal + set</option><option>Removal</option><option>Press ons</option><option>Gel mani</option><option>Repair</option><option>Other</option></select></div>
       <div class="form-group" id="fg-client"><label class="form-label" id="client-label">Client</label><input type="text" id="f-client" class="form-input" placeholder="Client name"></div>
       <div class="form-group form-full" id="fg-paytype"><label class="form-label">Payment type</label><div class="pay-toggle"><button class="pay-btn active" id="pay-full" onclick="setPayType('Full Payment')">Full Payment</button><button class="pay-btn" id="pay-dep" onclick="setPayType('Deposit')">Deposit</button></div></div>
@@ -351,13 +161,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
     <button class="btn-pink" onclick="exportExcel()">Export Excel</button>
   </div>
   <div class="table-wrap"><table class="data-table"><thead><tr><th>Date</th><th>Type</th><th>Pay</th><th>Service</th><th>Client / Supplier</th><th>Staff</th><th class="td-right">Cash</th><th class="td-right">Transfer</th><th class="td-right">Total</th><th>Note</th><th></th></tr></thead><tbody id="ledger-body"></tbody></table></div>
-  <div style="margin-top:8px;font-size:12px;color:var(--text-muted)" id="ledger-count"></div>
+  <div class="ledger-count" id="ledger-count"></div>
 </div>
 
 <!-- ═══ CASH LEDGER ═══ -->
 <div id="page-cash" class="page">
   <div class="page-header"><div class="page-title">Cash Ledger</div><div class="page-subtitle">Cash-only transactions</div></div>
-  <div class="metric-grid metric-grid-2" style="margin-bottom:28px">
+  <div class="metric-grid metric-grid-2 metric-grid-compact">
     <div class="metric-card pink"><div class="mc-label">Total Cash In</div><div class="mc-value positive" id="cash-in-total">$0.00</div></div>
     <div class="metric-card"><div class="mc-label">Total Cash Out</div><div class="mc-value negative" id="cash-out-total">$0.00</div></div>
   </div>
@@ -373,14 +183,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
 <div id="page-accountant" class="page">
   <div class="page-header"><div class="page-title">Accountant Export</div><div class="page-subtitle">Clean export with cash/transfer split</div></div>
   <div class="export-bar"><span class="eb-label">Full transaction history with cash and bank transfer split, ready for your accountant.</span><button class="btn-pink" onclick="exportExcel('accountant')">Export to Excel</button><button class="btn-secondary" onclick="exportExcel()">Full Ledger</button></div>
-  <div class="metric-grid metric-grid-4" style="margin-bottom:28px">
+  <div class="metric-grid metric-grid-4 metric-grid-compact">
     <div class="metric-card"><div class="mc-label">Transfer Revenue</div><div class="mc-value positive" id="acc-tf-rev">$0.00</div></div>
     <div class="metric-card"><div class="mc-label">Cash Revenue</div><div class="mc-value positive" id="acc-cash-rev">$0.00</div></div>
     <div class="metric-card pink"><div class="mc-label">Total Revenue</div><div class="mc-value positive" id="acc-total-rev">$0.00</div></div>
     <div class="metric-card"><div class="mc-label">Total Expenses</div><div class="mc-value negative" id="acc-total-exp">$0.00</div></div>
   </div>
   <div class="section-header"><div class="section-title">By month</div></div>
-  <div class="monthly-table-wrap" style="margin-bottom:28px"><table class="data-table"><thead><tr><th>Month</th><th class="td-right">Revenue</th><th class="td-right">Deposits</th><th class="td-right">Expenses</th><th class="td-right">Net</th><th class="td-right">Harnoor</th><th class="td-right">Dikshi</th></tr></thead><tbody id="acc-monthly-body"></tbody></table></div>
+  <div class="monthly-table-wrap monthly-table-compact"><table class="data-table"><thead><tr><th>Month</th><th class="td-right">Revenue</th><th class="td-right">Deposits</th><th class="td-right">Expenses</th><th class="td-right">Net</th><th class="td-right">Harnoor</th><th class="td-right">Dikshi</th></tr></thead><tbody id="acc-monthly-body"></tbody></table></div>
   <div class="section-header"><div class="section-title">Transfer transactions</div></div>
   <div class="table-wrap"><table class="data-table"><thead><tr><th>Date</th><th>Type</th><th>Service</th><th>Client / Supplier</th><th>Staff</th><th class="td-right">Transfer</th><th class="td-right">Total</th><th>Note</th></tr></thead><tbody id="acc-body"></tbody></table></div>
 </div>
@@ -392,9 +202,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
     <div class="page-subtitle">Upload your 2024, 2025 or 2026 spreadsheets — all formats are auto-detected</div>
   </div>
 
-  <div style="background:var(--white);border:1px solid var(--border);padding:20px 24px;margin-bottom:24px">
-    <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-secondary);font-weight:500;margin-bottom:12px">What this importer handles</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text-secondary);line-height:1.6">
+  <div class="import-help">
+    <div class="import-help-title">What this importer handles</div>
+    <div class="import-help-grid">
       <div>✓ Your existing HD spreadsheet format (date, service, client, fee, method columns)</div>
       <div>✓ Revenue rows (Gel x, BIAB, infills, removals, press ons etc.)</div>
       <div>✓ Expense rows (supplies, equipment)</div>
@@ -415,15 +225,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
     <div class="iz-sub">Accepts .xlsx, .xls files<br>You can upload multiple files at once (e.g. 2024.xlsx + 2025.xlsx + 2026.xlsx)</div>
   </div>
 
-  <div id="import-preview" style="display:none">
+  <div id="import-preview" class="import-preview">
     <div class="import-stats" id="import-stats"></div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     <div class="import-log" id="import-log"></div>
-    <div class="btn-row" style="margin-top:16px">
+    <div class="btn-row btn-row-import">
       <button class="btn-primary" id="confirm-import-btn" onclick="confirmImport()">Confirm Import</button>
       <button class="btn-secondary" onclick="cancelImport()">Cancel</button>
     </div>
-    <div class="preview-table-wrap" id="preview-table-wrap" style="margin-top:16px"></div>
+    <div class="preview-table-wrap preview-table-import" id="preview-table-wrap"></div>
   </div>
 </div>
 
@@ -432,639 +242,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text-p
 
 <div class="toast" id="toast"></div>
 
-<script>
-// ═══════════════════════════════════════════
-// CONFIG — paste your Web App URL here
-// ═══════════════════════════════════════════
-let API_URL = localStorage.getItem('hd_api_url') || '';
-// ═══════════════════════════════════════════
-
-let DB = [];
-let pendingImport = [];
-let currentType = 'Revenue';
-let currentPayType = 'Full Payment';
-
-// ── PWA SERVICE WORKER ──────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-
-// ── SYNC ────────────────────────────────────
-function setSyncStatus(status, msg) {
-  const statusMap = {
-    loading:      { dot:'loading',   text: msg||'Syncing with Google Sheets...' },
-    connected:    { dot:'connected', text: msg||'Connected · '+new Date().toLocaleTimeString() },
-    error:        { dot:'error',     text: msg||'Connection error — using cached data' },
-    disconnected: { dot:'',          text: 'No Web App URL — data saves locally only' },
-  };
-  const s = statusMap[status] || statusMap.disconnected;
-  ['sync-bar-dash','sync-bar-entry'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = `<div class="sync-bar"><div class="sync-dot ${s.dot}"></div><span class="sync-text">${s.text}</span><button class="sync-btn" onclick="loadData()">↺ Refresh</button></div>`;
-  });
-}
-
-function renderConfigBanners() {
-  const html = API_URL ? '' : `<div class="config-banner"><div class="cb-icon">⚙️</div><div class="cb-body"><div class="cb-title">Connect to Google Sheets for shared data</div><div class="cb-text">Both Harnoor and Dikshi need to paste this URL once. Go to your Google Sheet → Extensions → Apps Script → Deploy → New deployment → Web App → Execute as Me, Anyone can access → Deploy → copy URL.</div><input class="cb-input" type="text" placeholder="https://script.google.com/macros/s/.../exec" value="${API_URL}" onblur="saveApiUrl(this.value)"></div></div>`;
-  ['config-banner-dash','config-banner-entry'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.innerHTML = html;
-  });
-}
-
-function saveApiUrl(url) {
-  url = url.trim(); if (!url) return;
-  API_URL = url; localStorage.setItem('hd_api_url', url);
-  renderConfigBanners(); loadData();
-}
-
-// ── API ──────────────────────────────────────
-async function apiGet() {
-  const res = await fetch(API_URL + '?t=' + Date.now());
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
-  if (data.status !== 'ok') throw new Error(data.message);
-  return data.entries || [];
-}
-
-async function apiPost(body) {
-  const res = await fetch(API_URL, { method:'POST', body:JSON.stringify(body) });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
-  if (data.status !== 'ok') throw new Error(data.message);
-  return data;
-}
-
-async function loadData(silent = false) {
-  if (!API_URL) { setSyncStatus('disconnected'); hideLoading(); return; }
-  if (!silent) setSyncStatus('loading');
-  try {
-    const entries = await apiGet();
-    DB = entries.sort((a,b) => new Date(b.date) - new Date(a.date));
-    localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
-    setSyncStatus('connected', `Connected · ${DB.length} entries · ${new Date().toLocaleTimeString()}`);
-    refreshAllViews();
-  } catch(err) {
-    setSyncStatus('error', 'Error: ' + err.message);
-    const cached = localStorage.getItem('hd_nails_cache');
-    if (cached) { try { DB = JSON.parse(cached); refreshAllViews(); } catch(e){} }
-  }
-  hideLoading();
-}
-
-function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
-
-// ── NAV ──────────────────────────────────────
-function nav(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(item => {
-    if (item.getAttribute('onclick') === `nav('${page}')`) item.classList.add('active');
-  });
-  if (page==='ledger')     renderLedger();
-  if (page==='cash')       renderCashLedger();
-  if (page==='accountant') renderAccountant();
-  if (page==='dashboard')  refreshDashboard();
-  if (API_URL && page !== 'import') loadData(true);
-}
-
-// ── FORM ──────────────────────────────────────
-function setEntryType(t) {
-  currentType = t;
-  document.querySelectorAll('.type-tab').forEach((b,i) => b.classList.toggle('active',['Revenue','Expense','Deposit','Withdrawal'][i]===t));
-  const si = ['Revenue','Deposit'].includes(t);
-  document.getElementById('fg-staff').style.display   = si?'':'none';
-  document.getElementById('fg-service').style.display = si?'':'none';
-  document.getElementById('fg-client').style.display  = t!=='Withdrawal'?'':'none';
-  document.getElementById('fg-paytype').style.display = si?'':'none';
-  document.getElementById('client-label').textContent = t==='Expense'?'Supplier':'Client';
-  document.getElementById('f-client').placeholder = t==='Expense'?'Supplier name':t==='Withdrawal'?'e.g. Harnoor personal':'Client name';
-  if (t==='Deposit') { document.getElementById('f-amount').value=20; document.getElementById('f-transfer').value=20; document.getElementById('f-cash').value=''; }
-}
-
-function setPayType(t) {
-  currentPayType = t;
-  document.getElementById('pay-full').classList.toggle('active', t==='Full Payment');
-  document.getElementById('pay-dep').classList.toggle('active', t==='Deposit');
-}
-
-function autoSplit() {
-  const total = parseFloat(document.getElementById('f-amount').value)||0;
-  const cash = parseFloat(document.getElementById('f-cash').value)||0;
-  const tf = parseFloat(document.getElementById('f-transfer').value)||0;
-  if (cash===0&&tf===0) document.getElementById('f-transfer').value = total>0?total.toFixed(2):'';
-  else if (cash>0&&tf===0) document.getElementById('f-transfer').value = (total-cash).toFixed(2);
-  else if (tf>0&&cash===0) document.getElementById('f-cash').value = (total-tf).toFixed(2);
-}
-
-function syncSplit(changed) {
-  const total = parseFloat(document.getElementById('f-amount').value)||0;
-  if (!total) return;
-  if (changed==='cash') document.getElementById('f-transfer').value = Math.max(0,total-(parseFloat(document.getElementById('f-cash').value)||0)).toFixed(2);
-  else document.getElementById('f-cash').value = Math.max(0,total-(parseFloat(document.getElementById('f-transfer').value)||0)).toFixed(2);
-}
-
-function clearForm() {
-  document.getElementById('f-date').value = today();
-  ['f-client','f-amount','f-cash','f-transfer','f-note'].forEach(id => document.getElementById(id).value='');
-  setEntryType('Revenue'); setPayType('Full Payment');
-}
-
-function today() { return new Date().toISOString().split('T')[0]; }
-
-// ── SUBMIT ────────────────────────────────────
-async function submitEntry() {
-  const date=document.getElementById('f-date').value, type=currentType, payType=currentPayType;
-  const service=document.getElementById('f-service').value, client=document.getElementById('f-client').value.trim();
-  const staff=document.getElementById('f-staff').value, amount=parseFloat(document.getElementById('f-amount').value)||0;
-  let cash=parseFloat(document.getElementById('f-cash').value)||0, tf=parseFloat(document.getElementById('f-transfer').value)||0;
-  const note=document.getElementById('f-note').value.trim();
-  if (!date) { toast('Enter a date.'); return; }
-  if (!amount) { toast('Enter an amount.'); return; }
-  if (['Revenue','Deposit'].includes(type)&&!client) { toast('Enter a client name.'); return; }
-  if (type==='Expense'&&!client) { toast('Enter a supplier name.'); return; }
-  if (cash===0&&tf===0) tf=amount;
-  else if (cash>0&&tf===0) tf=amount-cash;
-  else if (tf>0&&cash===0) cash=amount-tf;
-  const entry = {
-    id:'HD'+Date.now(), date, type,
-    payType: ['Revenue','Deposit'].includes(type)?payType:'-',
-    service: ['Revenue','Deposit'].includes(type)?service:'-',
-    client: client||'-', staff: ['Revenue','Deposit'].includes(type)?staff:'-',
-    amount:+amount.toFixed(2), cash:+Math.max(0,cash).toFixed(2), tf:+Math.max(0,tf).toFixed(2),
-    note, month:date.slice(0,7),
-  };
-  const btn = document.getElementById('submit-btn');
-  btn.disabled=true; btn.textContent='Saving...';
-  try {
-    if (API_URL) { await apiPost({action:'add',entry}); }
-    DB.unshift(entry);
-    localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
-    refreshAllViews();
-    toast(`✓ ${type} $${amount.toFixed(2)} saved`);
-    clearForm();
-  } catch(err) { toast('Error: '+err.message); }
-  finally { btn.disabled=false; btn.textContent='Add Entry'; }
-}
-
-// ── DELETE ────────────────────────────────────
-async function deleteEntry(id) {
-  if (!confirm('Delete this entry?')) return;
-  try {
-    if (API_URL) await apiPost({action:'delete',id});
-    DB = DB.filter(e=>e.id!==id);
-    localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
-    refreshAllViews(); toast('Entry deleted.');
-  } catch(err) { toast('Error: '+err.message); }
-}
-
-// ── VIEWS ─────────────────────────────────────
-function refreshAllViews() { refreshDashboard(); renderLedger(); renderCashLedger(); renderAccountant(); }
-
-function fmt(n) { return '$'+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
-function fmtDate(d) { if(!d)return''; const[y,m,day]=d.split('-'); return`${day}/${m}/${y}`; }
-function fmtMonth(ym) {
-  if(!ym)return''; const[y,m]=ym.split('-');
-  return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1]+' '+y;
-}
-function typeBadge(t) {
-  const m={Revenue:'badge-revenue',Expense:'badge-expense',Deposit:'badge-deposit',Withdrawal:'badge-withdrawal'};
-  return`<span class="badge ${m[t]||''}">${t}</span>`;
-}
-function staffBadge(s) {
-  if(!s||s==='-')return'<span style="color:var(--text-muted)">—</span>';
-  return`<span class="badge ${s==='Harnoor'?'badge-harnoor':'badge-dikshi'}">${s}</span>`;
-}
-
-function refreshDashboard() {
-  let cashHand=0,cashBank=0,totalRev=0,totalExp=0,totalWith=0,fullTf=0,fullCash=0,deps=0;
-  let hRev=0,hCash=0,hTf=0,dRev=0,dCash=0,dTf=0;
-  const monthly={};
-  DB.forEach(e=>{
-    const isInc=e.type==='Revenue'||e.type==='Deposit';
-    if(!monthly[e.month])monthly[e.month]={rev:0,exp:0,cash:0,tf:0,count:0};
-    monthly[e.month].count++;
-    if(isInc){
-      totalRev+=e.amount;cashHand+=e.cash;cashBank+=e.tf;
-      monthly[e.month].rev+=e.amount;monthly[e.month].cash+=e.cash;monthly[e.month].tf+=e.tf;
-      if(e.type==='Deposit')deps+=e.amount;else{fullTf+=e.tf;fullCash+=e.cash;}
-      if(e.staff==='Harnoor'){hRev+=e.amount;hCash+=e.cash;hTf+=e.tf;}
-      if(e.staff==='Dikshi'){dRev+=e.amount;dCash+=e.cash;dTf+=e.tf;}
-    }else if(e.type==='Expense'){totalExp+=e.amount;cashHand-=e.cash;cashBank-=e.tf;monthly[e.month].exp+=e.amount;}
-    else if(e.type==='Withdrawal'){totalWith+=e.amount;cashHand-=e.cash;cashBank-=e.tf;}
-  });
-  const totalBiz=cashHand+cashBank, net=totalRev-totalExp;
-  document.getElementById('sb-balance').textContent=fmt(totalBiz);
-  document.getElementById('m-cash-hand').textContent=fmt(cashHand);
-  document.getElementById('m-cash-bank').textContent=fmt(cashBank);
-  document.getElementById('m-total-biz').textContent=fmt(totalBiz);
-  document.getElementById('m-withdrawals').textContent=fmt(totalWith);
-  document.getElementById('m-total-rev').textContent=fmt(totalRev);
-  document.getElementById('m-total-exp').textContent=fmt(totalExp);
-  const np=document.getElementById('m-net-profit');
-  np.textContent=fmt(net);np.className='mc-value '+(net>=0?'positive':'negative');
-  document.getElementById('d-full-tf').textContent=fmt(fullTf);
-  document.getElementById('d-full-cash').textContent=fmt(fullCash);
-  document.getElementById('d-deps').textContent=fmt(deps);
-  document.getElementById('d-exp-neg').textContent=fmt(totalExp);
-  const dn=document.getElementById('d-net');dn.textContent=fmt(net);dn.className='dr-val '+(net>=0?'pos':'neg');
-  ['d-h-rev','d-h-cash','d-h-tf'].forEach((id,i)=>document.getElementById(id).textContent=fmt([hRev,hCash,hTf][i]));
-  ['d-d-rev','d-d-cash','d-d-tf'].forEach((id,i)=>document.getElementById(id).textContent=fmt([dRev,dCash,dTf][i]));
-  const months=Object.keys(monthly).sort().reverse().slice(0,12);
-  document.getElementById('monthly-body').innerHTML=months.length
-    ?months.map(m=>{const d=monthly[m];d.net=d.rev-d.exp;return`<tr>
-      <td><strong>${fmtMonth(m)}</strong></td>
-      <td class="td-right" style="color:#4a7c4e">${fmt(d.rev)}</td>
-      <td class="td-right" style="color:var(--pink-dark)">${fmt(d.exp)}</td>
-      <td class="td-right"><strong style="color:${d.net>=0?'#4a7c4e':'var(--pink-dark)'}">${fmt(d.net)}</strong></td>
-      <td class="td-right">${fmt(d.cash)}</td>
-      <td class="td-right">${fmt(d.tf)}</td>
-      <td class="td-right" style="color:var(--text-muted)">${d.count}</td>
-    </tr>`;}).join('')
-    :'<tr><td colspan="7"><div class="empty-state"><div class="es-text">No data yet</div></div></td></tr>';
-  if(DB.length)document.getElementById('dash-updated').textContent=`${DB.length} entries · ${new Date().toLocaleTimeString()}`;
-}
-
-function renderLedger() {
-  const tf=document.getElementById('l-filter-type').value, sf=document.getElementById('l-filter-staff').value;
-  const pf=document.getElementById('l-filter-pay').value, s=document.getElementById('l-search').value.toLowerCase();
-  const f=DB.filter(e=>(!tf||e.type===tf)&&(!sf||e.staff===sf)&&(!pf||e.payType===pf)&&(!s||(e.client||'').toLowerCase().includes(s)||(e.note||'').toLowerCase().includes(s)));
-  const tbody=document.getElementById('ledger-body');
-  if(!f.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><div class="es-text">No entries match filters</div></div></td></tr>';document.getElementById('ledger-count').textContent='';return;}
-  tbody.innerHTML=f.map(e=>`<tr>
-    <td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td>
-    <td><span class="badge badge-full" style="font-size:10px">${e.payType==='-'?'—':e.payType}</span></td>
-    <td style="color:var(--text-secondary)">${e.service==='-'?'—':e.service}</td>
-    <td><strong>${e.client}</strong></td><td>${staffBadge(e.staff)}</td>
-    <td class="td-right td-mono">${e.cash>0?fmt(e.cash):'<span style="color:var(--text-muted)">—</span>'}</td>
-    <td class="td-right td-mono">${e.tf>0?fmt(e.tf):'<span style="color:var(--text-muted)">—</span>'}</td>
-    <td class="td-right td-mono"><strong style="color:${['Revenue','Deposit'].includes(e.type)?'#4a7c4e':'var(--pink-dark)'}">${['Revenue','Deposit'].includes(e.type)?'+':'-'}${fmt(e.amount)}</strong></td>
-    <td style="color:var(--text-muted);font-size:12px">${e.note||''}</td>
-    <td><button class="del-btn" onclick="deleteEntry('${e.id}')">×</button></td>
-  </tr>`).join('');
-  document.getElementById('ledger-count').textContent=`Showing ${f.length} of ${DB.length} entries`;
-}
-
-function renderCashLedger() {
-  const sf=document.getElementById('c-filter-staff').value, s=document.getElementById('c-search').value.toLowerCase();
-  const ce=DB.filter(e=>e.cash>0&&(!sf||e.staff===sf)&&(!s||(e.client||'').toLowerCase().includes(s)));
-  let ci=0,co=0; ce.forEach(e=>{ if(['Revenue','Deposit'].includes(e.type))ci+=e.cash;else co+=e.cash; });
-  document.getElementById('cash-in-total').textContent=fmt(ci);
-  document.getElementById('cash-out-total').textContent=fmt(co);
-  document.getElementById('cash-body').innerHTML=ce.length
-    ?ce.map(e=>`<tr><td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td><td style="color:var(--text-secondary)">${e.service==='-'?'—':e.service}</td><td>${e.client}</td><td>${staffBadge(e.staff)}</td><td class="td-right td-mono"><strong style="color:${['Revenue','Deposit'].includes(e.type)?'#4a7c4e':'var(--pink-dark)'}">${['Revenue','Deposit'].includes(e.type)?'+':'-'}${fmt(e.cash)}</strong></td><td style="color:var(--text-muted);font-size:12px">${e.note||''}</td></tr>`).join('')
-    :'<tr><td colspan="7"><div class="empty-state"><div class="es-text">No cash transactions</div></div></td></tr>';
-}
-
-function renderAccountant() {
-  let tfR=0,cR=0,tR=0,tE=0; const monthly={};
-  DB.forEach(e=>{
-    if(!monthly[e.month])monthly[e.month]={rev:0,dep:0,exp:0,net:0,h:0,d:0};
-    if(['Revenue','Deposit'].includes(e.type)){tfR+=e.tf;cR+=e.cash;tR+=e.amount;if(e.type==='Revenue')monthly[e.month].rev+=e.amount;else monthly[e.month].dep+=e.amount;if(e.staff==='Harnoor')monthly[e.month].h+=e.amount;if(e.staff==='Dikshi')monthly[e.month].d+=e.amount;}
-    else if(e.type==='Expense'){tE+=e.amount;monthly[e.month].exp+=e.amount;}
-    monthly[e.month].net=monthly[e.month].rev+monthly[e.month].dep-monthly[e.month].exp;
-  });
-  document.getElementById('acc-tf-rev').textContent=fmt(tfR);document.getElementById('acc-cash-rev').textContent=fmt(cR);
-  document.getElementById('acc-total-rev').textContent=fmt(tR);document.getElementById('acc-total-exp').textContent=fmt(tE);
-  const months=Object.keys(monthly).sort().reverse();
-  document.getElementById('acc-monthly-body').innerHTML=months.length?months.map(m=>{const d=monthly[m];return`<tr><td><strong>${fmtMonth(m)}</strong></td><td class="td-right" style="color:#4a7c4e">${fmt(d.rev)}</td><td class="td-right" style="color:#9a6c2a">${fmt(d.dep)}</td><td class="td-right" style="color:var(--pink-dark)">${fmt(d.exp)}</td><td class="td-right"><strong style="color:${d.net>=0?'#4a7c4e':'var(--pink-dark)'}">${fmt(d.net)}</strong></td><td class="td-right" style="color:var(--pink-dark)">${fmt(d.h)}</td><td class="td-right" style="color:#2b5baa">${fmt(d.d)}</td></tr>`;}).join(''):'<tr><td colspan="7"><div class="empty-state"><div class="es-text">No data</div></div></td></tr>';
-  const ae=DB.filter(e=>e.tf>0||e.type==='Expense'||e.type==='Withdrawal');
-  document.getElementById('acc-body').innerHTML=ae.length?ae.map(e=>`<tr><td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td><td style="color:var(--text-secondary)">${e.service==='-'?'—':e.service}</td><td>${e.client}</td><td>${staffBadge(e.staff)}</td><td class="td-right td-mono">${e.tf>0?fmt(e.tf):'—'}</td><td class="td-right td-mono"><strong>${fmt(e.amount)}</strong></td><td style="color:var(--text-muted);font-size:12px">${e.note||''}</td></tr>`).join(''):'<tr><td colspan="8"><div class="empty-state"><div class="es-text">No transfer transactions</div></div></td></tr>';
-}
-
-// ── EXCEL EXPORT ──────────────────────────────
-function exportExcel(mode) {
-  const wb = XLSX.utils.book_new();
-  const allRows=DB.map(e=>({'Date':fmtDate(e.date),'Type':e.type,'Payment Type':e.payType,'Service':e.service,'Client / Supplier':e.client,'Staff':e.staff,'Cash ($)':e.cash,'Transfer ($)':e.tf,'Total ($)':e.amount,'Note':e.note,'Month':fmtMonth(e.month)}));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(allRows),'Full Ledger');
-  const cashRows=DB.filter(e=>e.cash>0).map(e=>({'Date':fmtDate(e.date),'Type':e.type,'Service':e.service,'Client':e.client,'Staff':e.staff,'Cash Amount ($)':e.cash,'Note':e.note}));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(cashRows.length?cashRows:[{Note:'No cash transactions'}]),'Cash Ledger');
-  const tfRows=DB.filter(e=>e.tf>0||e.type==='Expense').map(e=>({'Date':fmtDate(e.date),'Type':e.type,'Payment Type':e.payType,'Service':e.service,'Client / Supplier':e.client,'Staff':e.staff,'Transfer Amount ($)':e.tf,'Total Amount ($)':e.amount,'Note':e.note}));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tfRows.length?tfRows:[{Note:'No transfer transactions'}]),'Accountant Export');
-  const monthly={};
-  DB.forEach(e=>{if(!monthly[e.month])monthly[e.month]={rev:0,dep:0,exp:0,cash:0,tf:0,wd:0,entries:0,harnoor:0,dikshi:0};const m=monthly[e.month];m.entries++;if(e.type==='Revenue'){m.rev+=e.amount;m.cash+=e.cash;m.tf+=e.tf;}if(e.type==='Deposit'){m.dep+=e.amount;m.cash+=e.cash;m.tf+=e.tf;}if(e.type==='Expense')m.exp+=e.amount;if(e.type==='Withdrawal')m.wd+=e.amount;if(e.staff==='Harnoor')m.harnoor+=e.amount;if(e.staff==='Dikshi')m.dikshi+=e.amount;});
-  const mRows=Object.keys(monthly).sort().map(ym=>{const d=monthly[ym];return{'Month':fmtMonth(ym),'Revenue ($)':d.rev,'Deposits ($)':d.dep,'Total Income ($)':d.rev+d.dep,'Expenses ($)':d.exp,'Net Profit ($)':d.rev+d.dep-d.exp,'Cash Income ($)':d.cash,'Transfer Income ($)':d.tf,'Withdrawals ($)':d.wd,'Harnoor ($)':d.harnoor,'Dikshi ($)':d.dikshi,'Entries':d.entries};});
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(mRows.length?mRows:[{Note:'No data'}]),'Monthly Summary');
-  XLSX.writeFile(wb,`HD_NailStudio_${new Date().toISOString().slice(0,10)}.xlsx`);
-  toast('✓ Excel downloaded');
-}
-
-// ═══════════════════════════════════════════════════
-// SMART IMPORTER — reads their existing spreadsheet
-// ═══════════════════════════════════════════════════
-
-function dragOver(e) { e.preventDefault(); document.getElementById('import-zone').classList.add('dragover'); }
-function dragLeave(e) { document.getElementById('import-zone').classList.remove('dragover'); }
-function dropFile(e) { e.preventDefault(); document.getElementById('import-zone').classList.remove('dragover'); handleFiles(e.dataTransfer.files); }
-
-function handleFiles(files) {
-  if (!files.length) return;
-  pendingImport = [];
-  const logEl = document.getElementById('import-log');
-  document.getElementById('import-preview').style.display = 'block';
-  logEl.innerHTML = '';
-  let totalParsed=0, totalSkipped=0, totalDups=0;
-
-  const existingIds = new Set(DB.map(e => e.date+'|'+e.type+'|'+e.client+'|'+e.amount));
-
-  Array.from(files).forEach(file => {
-    log(logEl, `📂 Processing: ${file.name}`, 'ok');
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      try {
-        const wb = XLSX.read(ev.target.result, {type:'binary', cellDates:true});
-        wb.SheetNames.forEach(sheetName => {
-          log(logEl, `  └ Sheet: "${sheetName}"`, 'ok');
-          const ws = wb.Sheets[sheetName];
-          const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
-          const result = parseHDSheet(rows, sheetName, existingIds, logEl);
-          pendingImport.push(...result.entries);
-          totalParsed += result.parsed;
-          totalSkipped += result.skipped;
-          totalDups += result.dups;
-          setProgress(Math.min(90, (pendingImport.length / Math.max(pendingImport.length+1,1))*90));
-        });
-      } catch(err) {
-        log(logEl, `  ✗ Error reading file: ${err.message}`, 'err');
-      }
-      updateImportStats(totalParsed, totalSkipped, totalDups);
-      renderImportPreview();
-      setProgress(100);
-    };
-    reader.readAsBinaryString(file);
-  });
-}
-
-function parseHDSheet(rows, sheetName, existingIds, logEl) {
-  let parsed=0, skipped=0, dups=0;
-  const entries = [];
-  let currentDate = null;
-
-  rows.forEach((row, rowIdx) => {
-    try {
-      // Try to extract date from col 0
-      const col0 = (row[0]||'').toString().trim();
-      const col1 = (row[1]||'').toString().trim();
-      const col2 = (row[2]||'').toString().trim();
-      const col3 = (row[3]||'').toString().trim();
-      const col4 = (row[4]||'').toString().trim();
-      const col5 = (row[5]||'').toString().trim();
-
-      // Skip empty rows, balance rows, header rows
-      if (!col1 && !col2) return;
-      if (col1.toLowerCase().includes('service') && col2.toLowerCase().includes('client')) return;
-      if (col3.toLowerCase().includes('balance') || col1.toLowerCase().includes('balance')) return;
-      if (col1.toLowerCase() === 'service' || col1.toLowerCase() === 'gel x deposit') {
-        // might still be valid — continue
-      }
-
-      // Date detection
-      const dateAttempt = parseFlexDate(col0);
-      if (dateAttempt) currentDate = dateAttempt;
-      if (!currentDate) return;
-
-      // Skip rows that look like deduction/reconciliation rows (contain a name with dash like "alyssa - harnoor")
-      const isDeduc = /\w+\s*[-–]\s*(harnoor|dikshi)/i.test(col2) || /\w+\s*[-–]\s*(harnoor|dikshi)/i.test(col5);
-      if (isDeduc) return;
-
-      // Skip BALANCE rows
-      if (/balance/i.test(col3) || /balance/i.test(col4) || /balance/i.test(col5)) return;
-
-      // Extract fee string from col3
-      const feeStr = col3.trim();
-      if (!feeStr) return;
-
-      // Skip if fee is empty or looks like a balance line
-      if (/^\$[\d,]+\.\d+/.test(feeStr) && feeStr.split('$').length > 2) return;
-
-      // Determine type
-      let type = 'Revenue';
-      let payType = 'Full Payment';
-      let amount = 0;
-      let cash = 0;
-      let tf = 0;
-
-      const feeUpper = feeStr.toUpperCase();
-      const isDeposit = feeUpper.includes('DEPOSIT');
-      const isSupply = /supplies?|supplier|shein|amazon|woolies|kmart|abs|lashmer|dicksmith|bunnings|diamond|best nail|ali/i.test(col2) || /supplies?/i.test(col1);
-
-      if (isSupply) {
-        type = 'Expense';
-      } else if (isDeposit) {
-        // Extract deposit amount
-        const match = feeStr.match(/\$?\s*([\d]+(?:\.\d+)?)/);
-        amount = match ? parseFloat(match[1]) : 20;
-        type = 'Deposit';
-        payType = 'Deposit';
-      } else {
-        // Try to parse amount
-        const match = feeStr.match(/\$?\s*([\d]+(?:\.\d+)?)/);
-        if (!match) return;
-        amount = parseFloat(match[1]);
-        if (!amount || amount <= 0) return;
-      }
-
-      if (type === 'Expense') {
-        // Parse negative amount
-        const match = feeStr.match(/-?\$?\s*([\d]+(?:\.\d+)?)/);
-        amount = match ? parseFloat(match[1]) : 0;
-        if (!amount) return;
-      }
-
-      // Payment method from col4
-      const methodStr = (col4||'').toString().toLowerCase();
-      const hasCash = methodStr.includes('cash');
-      const hasTransfer = methodStr.includes('transfer') || methodStr.includes('t/f') || methodStr.includes('pay id');
-
-      // Parse mixed amounts like "$10 transfer, $50 cash"
-      const cashMatch = col4.match(/\$?\s*(\d+(?:\.\d+)?)\s*cash/i);
-      const tfMatch   = col4.match(/\$?\s*(\d+(?:\.\d+)?)\s*(?:transfer|t\/f)/i);
-
-      if (cashMatch && tfMatch) {
-        cash = parseFloat(cashMatch[1]);
-        tf   = parseFloat(tfMatch[1]);
-        amount = cash + tf;
-      } else if (cashMatch) {
-        cash = parseFloat(cashMatch[1]);
-        tf   = Math.max(0, amount - cash);
-      } else if (tfMatch) {
-        tf   = parseFloat(tfMatch[1]);
-        cash = Math.max(0, amount - tf);
-      } else if (hasCash && !hasTransfer) {
-        cash = amount;
-      } else {
-        tf = amount;
-      }
-
-      // Staff from col5 (last column)
-      let staff = '-';
-      if (/harnoor/i.test(col5)) staff = 'Harnoor';
-      else if (/dikshi/i.test(col5)) staff = 'Dikshi';
-      // also check col5 for "H" or "D" shorthand
-      if (staff==='-' && /^h(\s|$|\d)/i.test(col5)) staff='Harnoor';
-      if (staff==='-' && /^d(\s|$|\d)/i.test(col5)) staff='Dikshi';
-
-      // Service from col1
-      const service = normaliseService(col1);
-      const client  = col2.trim() || '-';
-
-      const note = '';
-      const month = currentDate.slice(0,7);
-
-      // Duplicate check
-      const key = `${currentDate}|${type}|${client}|${amount}`;
-      if (existingIds.has(key)) { dups++; return; }
-      existingIds.add(key);
-
-      const entry = {
-        id: 'IMP'+Date.now()+'_'+rowIdx+Math.random().toString(36).slice(2,6),
-        date: currentDate, type, payType,
-        service: type==='Expense'?'Supplies':service,
-        client, staff,
-        amount:+amount.toFixed(2), cash:+Math.max(0,cash).toFixed(2), tf:+Math.max(0,tf).toFixed(2),
-        note, month,
-      };
-
-      entries.push(entry);
-      parsed++;
-    } catch(e) {
-      skipped++;
-    }
-  });
-
-  log(logEl, `  ✓ Parsed ${parsed} entries, ${skipped} rows skipped, ${dups} duplicates ignored`, parsed>0?'ok':'warn');
-  return { entries, parsed, skipped, dups };
-}
-
-function parseFlexDate(str) {
-  if (!str) return null;
-  str = str.toString().trim();
-  // dd/mm/yyyy or d/m/yyyy
-  let m = str.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
-  if (m) {
-    let [,d,mo,y] = m;
-    if (y.length===2) y='20'+y;
-    return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
-  }
-  // yyyy-mm-dd
-  m = str.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-  if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-  // Excel serial date number
-  if (/^\d{5}$/.test(str)) {
-    const d = new Date((parseInt(str)-25569)*86400*1000);
-    if (!isNaN(d)) return d.toISOString().split('T')[0];
-  }
-  return null;
-}
-
-function normaliseService(raw) {
-  raw = (raw||'').toLowerCase().trim();
-  if (raw.includes('biab infill')) return 'BIAB infill';
-  if (raw.includes('biab')) return 'BIAB';
-  if (raw.includes('gel x infill')) return 'Gel x infill';
-  if (raw.includes('infill')) return 'Gel x infill';
-  if (raw.includes('removal') && raw.includes('set')) return 'Removal + set';
-  if (raw.includes('removal') && raw.includes('biab')) return 'Removal + set';
-  if (raw.includes('removal') && raw.includes('mani')) return 'Gel mani';
-  if (raw.includes('removal')) return 'Removal';
-  if (raw.includes('press on')) return 'Press ons';
-  if (raw.includes('press')) return 'Press ons';
-  if (raw.includes('gel mani') || raw.includes('gel manicure')) return 'Gel mani';
-  if (raw.includes('repair')) return 'Repair';
-  if (raw.includes('gel x')) return 'Gel x';
-  if (raw.includes('supplies') || raw.includes('supply')) return 'Supplies';
-  return raw ? raw.charAt(0).toUpperCase()+raw.slice(1) : 'Other';
-}
-
-function log(el, msg, type='ok') {
-  const span = document.createElement('div');
-  span.className = type==='err'?'log-err':type==='warn'?'log-warn':'log-ok';
-  span.textContent = msg;
-  el.appendChild(span);
-  el.scrollTop = el.scrollHeight;
-}
-
-function setProgress(pct) {
-  document.getElementById('progress-fill').style.width = pct+'%';
-}
-
-function updateImportStats(parsed, skipped, dups) {
-  document.getElementById('import-stats').innerHTML = `
-    <div class="istat"><div class="istat-label">Entries found</div><div class="istat-val">${parsed}</div></div>
-    <div class="istat"><div class="istat-label">Rows skipped</div><div class="istat-val">${skipped}</div></div>
-    <div class="istat"><div class="istat-label">Duplicates</div><div class="istat-val">${dups}</div></div>
-    <div class="istat"><div class="istat-label">Ready to import</div><div class="istat-val" style="color:#4a7c4e">${pendingImport.length}</div></div>`;
-}
-
-function renderImportPreview() {
-  const wrap = document.getElementById('preview-table-wrap');
-  if (!pendingImport.length) { wrap.innerHTML='<div class="empty-state"><div class="es-text">No importable entries found — check your file format</div></div>'; return; }
-  const sample = pendingImport.slice(0,50);
-  wrap.innerHTML = `<div style="padding:10px 14px;font-size:11px;color:var(--text-muted);background:var(--beige-dark)">Preview — showing first ${sample.length} of ${pendingImport.length} entries</div>
-    <table class="data-table"><thead><tr><th>Date</th><th>Type</th><th>Service</th><th>Client</th><th>Staff</th><th class="td-right">Cash</th><th class="td-right">Transfer</th><th class="td-right">Total</th></tr></thead>
-    <tbody>${sample.map(e=>`<tr>
-      <td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td>
-      <td style="color:var(--text-secondary)">${e.service}</td><td>${e.client}</td>
-      <td>${staffBadge(e.staff)}</td>
-      <td class="td-right td-mono">${e.cash>0?fmt(e.cash):'—'}</td>
-      <td class="td-right td-mono">${e.tf>0?fmt(e.tf):'—'}</td>
-      <td class="td-right td-mono"><strong>${fmt(e.amount)}</strong></td>
-    </tr>`).join('')}</tbody></table>`;
-}
-
-async function confirmImport() {
-  if (!pendingImport.length) { toast('Nothing to import.'); return; }
-  const btn = document.getElementById('confirm-import-btn');
-  btn.disabled = true; btn.textContent = 'Importing...';
-  const logEl = document.getElementById('import-log');
-  log(logEl, `⬆ Sending ${pendingImport.length} entries to Google Sheets...`, 'ok');
-
-  let success=0, fail=0;
-  // Batch in groups of 20 to avoid timeout
-  const batchSize = 20;
-  for (let i=0; i<pendingImport.length; i+=batchSize) {
-    const batch = pendingImport.slice(i, i+batchSize);
-    for (const entry of batch) {
-      try {
-        if (API_URL) await apiPost({action:'add', entry});
-        DB.unshift(entry);
-        success++;
-      } catch(err) { fail++; }
-    }
-    setProgress(Math.round(((i+batchSize)/pendingImport.length)*100));
-    log(logEl, `  ${Math.min(i+batchSize, pendingImport.length)}/${pendingImport.length} processed`, 'ok');
-    await new Promise(r=>setTimeout(r,100)); // small delay between batches
-  }
-
-  localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
-  refreshAllViews();
-  log(logEl, `✓ Done! ${success} imported${fail>0?`, ${fail} failed`:''}`, success>0?'ok':'err');
-  toast(`✓ ${success} entries imported successfully`);
-  pendingImport = [];
-  btn.disabled=false; btn.textContent='Confirm Import';
-}
-
-function cancelImport() {
-  pendingImport=[];
-  document.getElementById('import-preview').style.display='none';
-  document.getElementById('import-log').innerHTML='';
-  setProgress(0);
-}
-
-// ── TOAST ──────────────────────────────────────
-function toast(msg) {
-  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),3500);
-}
-
-// ── INIT ──────────────────────────────────────
-document.getElementById('f-date').value = today();
-renderConfigBanners();
-setSyncStatus(API_URL?'loading':'disconnected');
-const cached = localStorage.getItem('hd_nails_cache');
-if (cached) { try { DB=JSON.parse(cached); refreshAllViews(); } catch(e){} }
-if (API_URL) loadData(); else hideLoading();
-setInterval(()=>{ if(API_URL&&document.visibilityState==='visible') loadData(true); }, 30000);
-</script>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/sync.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/form.js"></script>
+<script src="assets/js/entries.js"></script>
+<script src="assets/js/views.js"></script>
+<script src="assets/js/export.js"></script>
+<script src="assets/js/import.js"></script>
+<script src="assets/js/app.js"></script>
 </body>
 </html>
