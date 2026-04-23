@@ -80,6 +80,18 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(180deg,#fbfaf8 
 /* ── SECTION ── */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .section-title{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-secondary);font-weight:500}
+.section-sub { font-size:10px; color:var(--text-muted); letter-spacing:0.08em; }
+
+/* Period filter */
+.dash-period-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.dash-period-bar { display:flex; gap:6px; flex-wrap:wrap; }
+.period-btn { padding:6px 13px; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; font-weight:500; border:1px solid var(--border); background:rgba(255,255,255,0.6); color:var(--text-secondary); cursor:pointer; border-radius:999px; font-family:'DM Sans',sans-serif; transition:all 0.15s; white-space:nowrap; }
+.period-btn:hover { background:var(--beige-dark); color:var(--text-primary); border-color:var(--silver); }
+.period-btn.active { background:var(--black); color:var(--beige); border-color:var(--black); }
+
+/* Chart */
+.chart-card { background:rgba(255,255,255,0.9); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow); padding:20px 16px 10px; margin-bottom:28px; overflow:hidden; }
+#monthly-chart { display:block; width:100%; }
 
 /* ── TABLES ── */
 .table-wrap{background:rgba(255,255,255,0.9);border:1px solid var(--border);overflow:hidden;overflow-x:auto;border-radius:var(--radius-lg);box-shadow:var(--shadow);-webkit-overflow-scrolling:touch}
@@ -225,6 +237,8 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(180deg,#fbfaf8 
   .filter-bar{display:grid;grid-template-columns:1fr 1fr}
   .filter-bar .form-select,.filter-bar .form-input{width:100%;max-width:none;min-width:0}
   .filter-bar .btn-secondary,.filter-bar .btn-pink{grid-column:span 1;width:100%;padding-left:10px;padding-right:10px}
+  .dash-period-row { flex-direction:column; align-items:flex-start; }
+  .dash-period-bar { gap:5px; }
   .dash-split{grid-template-columns:1fr}
   .import-stats{grid-template-columns:1fr 1fr}
   .export-bar{display:grid;grid-template-columns:1fr;align-items:stretch}

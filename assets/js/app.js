@@ -13,3 +13,9 @@ if (cached) { try { DB=JSON.parse(cached); refreshAllViews(); } catch(e){} }
 hideLoading();
 if (API_URL) setTimeout(()=>loadData(true), 0);
 setInterval(()=>{ if(API_URL&&document.visibilityState==='visible') loadData(true); }, 30000);
+
+let _chartResizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_chartResizeTimer);
+  _chartResizeTimer = setTimeout(refreshDashboard, 120);
+});

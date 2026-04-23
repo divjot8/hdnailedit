@@ -25,28 +25,41 @@ async function submitEntry() {
     service: type==='Revenue'?service:'-',
     client: client||'-', staff: ['Revenue','Withdrawal'].includes(type)?staff:'-',
     amount:+amount.toFixed(2), cash:+Math.max(0,cash).toFixed(2), tf:+Math.max(0,tf).toFixed(2),
-    note, month:date.slice(0,7),
+    note, month:normalizeMonthKey(date, date),
   };
   const btn = document.getElementById('submit-btn');
   btn.disabled=true; btn.textContent='Saving...';
-  try {
-    if (API_URL) { await apiPost({action:'add',entry}); }
-    DB.unshift(entry);
-    localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
-    refreshAllViews();
-    toast(`✓ ${type} $${amount.toFixed(2)} saved`);
-    clearForm();
-  } catch(err) { toast('Error: '+err.message); }
-  finally { btn.disabled=false; btn.textContent='Add Entry'; }
+  DB.unshift(entry);
+  localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
+  refreshAllViews();
+  toast(`✓ ${type} $${amount.toFixed(2)} saved`);
+  clearForm();
+  btn.disabled=false; btn.textContent='Add Entry';
+
+  if (API_URL) {
+    apiPost({action:'add',entry})
+      .then(() => setSyncStatus('connected', `Connected · ${DB.length} entries · ${new Date().toLocaleTimeString()}`))
+      .catch(err => toast('Sheets sync error — saved locally: ' + err.message));
+  }
 }
 
 // ── DELETE ────────────────────────────────────
 async function deleteEntry(id) {
   if (!confirm('Delete this entry?')) return;
-  try {
-    if (API_URL) await apiPost({action:'delete',id});
-    DB = DB.filter(e=>e.id!==id);
-    localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
-    refreshAllViews(); toast('Entry deleted.');
-  } catch(err) { toast('Error: '+err.message); }
+  const removed = DB.find(e => e.id === id);
+  DB = DB.filter(e=>e.id!==id);
+  localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
+  refreshAllViews();
+  toast('Entry deleted.');
+  if (API_URL) {
+    apiPost({action:'delete',id}).catch(err => {
+      if (removed) {
+        DB.push(removed);
+        DB.sort((a, b) => new Date(`${b.date}T00:00:00`) - new Date(`${a.date}T00:00:00`));
+        localStorage.setItem('hd_nails_cache', JSON.stringify(DB));
+        refreshAllViews();
+      }
+      toast('Delete sync failed: ' + err.message);
+    });
+  }
 }

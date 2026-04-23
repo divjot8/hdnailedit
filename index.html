@@ -76,17 +76,57 @@
   </div>
   <div id="config-banner-dash"></div>
   <div id="sync-bar-dash"></div>
+
+  <!-- All-time balance (never filtered) -->
+  <div class="section-header" style="margin-bottom:12px">
+    <div class="section-title">Current Balance</div>
+    <div class="section-sub">All time</div>
+  </div>
   <div class="metric-grid metric-grid-4">
     <div class="metric-card pink"><div class="mc-label">Cash on Hand</div><div class="mc-value" id="m-cash-hand">$0.00</div><div class="mc-sub">Physical cash</div></div>
     <div class="metric-card black"><div class="mc-label">Cash at Bank</div><div class="mc-value" id="m-cash-bank">$0.00</div><div class="mc-sub">Transfers received</div></div>
     <div class="metric-card silver"><div class="mc-label">Total in Business</div><div class="mc-value" id="m-total-biz">$0.00</div><div class="mc-sub">Cash + bank</div></div>
     <div class="metric-card"><div class="mc-label">Withdrawals</div><div class="mc-value" id="m-withdrawals">$0.00</div><div class="mc-sub">Personal transfers</div></div>
   </div>
-  <div class="metric-grid metric-grid-section">
-    <div class="metric-card pink"><div class="mc-label">Total Revenue</div><div class="mc-value positive" id="m-total-rev">$0.00</div><div class="mc-sub">Incl. deposits</div></div>
-    <div class="metric-card"><div class="mc-label">Total Expenses</div><div class="mc-value negative" id="m-total-exp">$0.00</div><div class="mc-sub">Supplies & costs</div></div>
-    <div class="metric-card black"><div class="mc-label">Net Profit</div><div class="mc-value" id="m-net-profit">$0.00</div><div class="mc-sub">Revenue − expenses</div></div>
+
+  <!-- Period selector -->
+  <div class="dash-period-row">
+    <div class="section-title" id="p-period-label">This Month</div>
+    <div class="dash-period-bar">
+      <button class="period-btn active" onclick="setDashPeriod('thisMonth')">This Month</button>
+      <button class="period-btn" onclick="setDashPeriod('lastMonth')">Last Month</button>
+      <button class="period-btn" onclick="setDashPeriod('3months')">3 Months</button>
+      <button class="period-btn" onclick="setDashPeriod('6months')">6 Months</button>
+      <button class="period-btn" onclick="setDashPeriod('thisYear')">This Year</button>
+      <button class="period-btn" onclick="setDashPeriod('all')">All Time</button>
+    </div>
   </div>
+
+  <!-- Period performance cards -->
+  <div class="metric-grid metric-grid-4" style="margin-bottom:28px">
+    <div class="metric-card pink">
+      <div class="mc-label" id="p-rev-label">This Month Revenue</div>
+      <div class="mc-value positive" id="p-rev">$0.00</div>
+      <div class="mc-sub">Incl. deposits</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label" id="p-exp-label">This Month Expenses</div>
+      <div class="mc-value negative" id="p-exp">$0.00</div>
+      <div class="mc-sub">Supplies &amp; costs</div>
+    </div>
+    <div class="metric-card black">
+      <div class="mc-label" id="p-net-label">This Month Net Profit</div>
+      <div class="mc-value" id="p-net">$0.00</div>
+      <div class="mc-sub">Revenue − expenses</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Entries</div>
+      <div class="mc-value" id="p-entries" style="font-size:22px">0</div>
+      <div class="mc-sub">Transactions</div>
+    </div>
+  </div>
+
+  <!-- Income & Staff breakdown (period-filtered) -->
   <div class="dash-split">
     <div class="dash-block">
       <div class="dash-block-header">Income breakdown</div>
@@ -108,7 +148,15 @@
       <div class="dash-row"><span class="dr-label">Withdrawn to Dikshi</span><span class="dr-val dikshi" id="d-d-with">$0.00</span></div>
     </div>
   </div>
-  <div class="section-header"><div class="section-title">Monthly summary</div></div>
+
+  <!-- Bar chart -->
+  <div class="section-header"><div class="section-title">Revenue vs Expenses</div><div class="section-sub">Last 7 months</div></div>
+  <div class="chart-card">
+    <canvas id="monthly-chart"></canvas>
+  </div>
+
+  <!-- Monthly table -->
+  <div class="section-header"><div class="section-title">Monthly summary</div><div class="section-sub">Most recent 12 months</div></div>
   <div class="monthly-table-wrap">
     <table class="data-table"><thead><tr><th>Month</th><th class="td-right">Revenue</th><th class="td-right">Expenses</th><th class="td-right">Net Profit</th><th class="td-right">Cash</th><th class="td-right">Transfer</th><th class="td-right">Entries</th></tr></thead>
     <tbody id="monthly-body"></tbody></table>

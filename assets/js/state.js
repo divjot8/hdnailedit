@@ -9,6 +9,7 @@ let DB = [];
 let pendingImport = [];
 let currentType = 'Revenue';
 let currentPayType = 'Full Payment';
+let dashPeriod = 'thisMonth';
 let xlsxLoadPromise = null;
 const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
 
