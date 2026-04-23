@@ -1,0 +1,15 @@
+{
+  "name": "HD Nailed It",
+  "short_name": "HD Nailed It",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f7f5f2",
+  "theme_color": "#0f0f0f",
+  "icons": [
+    {
+      "src": "assets/HDNAILEDIT.jpeg",
+      "sizes": "1500x2100",
+      "type": "image/jpeg"
+    }
+  ]
+}
