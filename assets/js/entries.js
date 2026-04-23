@@ -7,17 +7,16 @@ async function submitEntry() {
   let cash=parseFloat(document.getElementById('f-cash').value)||0, tf=parseFloat(document.getElementById('f-transfer').value)||0;
   const note=document.getElementById('f-note').value.trim();
   if (type==='Withdrawal') {
-    syncWithdrawalParties('staff');
-    client = document.getElementById('f-withdrawal-from').value;
+    client = 'HDNailedIt';
   }
   if (!date) { toast('Enter a date.'); return; }
   if (!amount) { toast('Enter an amount.'); return; }
   if (['Revenue','Deposit'].includes(type)&&!client) { toast('Enter a client name.'); return; }
   if (type==='Expense'&&!client) { toast('Enter a supplier name.'); return; }
-  if (type==='Withdrawal'&&client===staff) { toast('Choose different people for paid from and paid to.'); return; }
   if (cash===0&&tf===0) tf=amount;
   else if (cash>0&&tf===0) tf=amount-cash;
   else if (tf>0&&cash===0) cash=amount-tf;
+  else if (cash+tf<amount) tf=amount-cash;
   if (cash < -0.01 || tf < -0.01 || cash > amount + 0.01 || tf > amount + 0.01) { toast('Cash and transfer must fit within the total.'); return; }
   if (cash + tf > amount + 0.01) { toast('Cash and transfer are more than the total.'); return; }
   const entry = {

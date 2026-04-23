@@ -20,7 +20,7 @@ function staffBadge(s) {
   return`<span class="badge ${s==='Harnoor'?'badge-harnoor':'badge-dikshi'}">${s}</span>`;
 }
 function partyText(e) {
-  if (e.type === 'Withdrawal') return `${e.client || '-'} to ${e.staff || '-'}`;
+  if (e.type === 'Withdrawal') return `HDNailedIt to ${e.staff || '-'}`;
   return e.client;
 }
 function amountClass(isPositive) {

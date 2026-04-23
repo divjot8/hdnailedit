@@ -6,14 +6,12 @@ function setEntryType(t) {
   const isWithdrawal = t==='Withdrawal';
   document.getElementById('fg-staff').style.display   = si||isWithdrawal?'':'none';
   document.querySelector('#fg-staff .form-label').textContent = isWithdrawal?'Paid to':'Staff';
-  document.getElementById('fg-withdrawal-from').style.display = isWithdrawal?'flex':'none';
   document.getElementById('fg-service').style.display = si?'':'none';
   document.getElementById('fg-client').style.display  = isWithdrawal?'none':'';
   document.getElementById('fg-paytype').style.display = si?'':'none';
   document.getElementById('client-label').textContent = t==='Expense'?'Supplier':'Client';
   document.getElementById('f-client').placeholder = t==='Expense'?'Supplier name':t==='Withdrawal'?'e.g. Harnoor personal':'Client name';
-  if (t==='Deposit') { document.getElementById('f-amount').value=20; document.getElementById('f-transfer').value=20; document.getElementById('f-cash').value=''; }
-  if (isWithdrawal) syncWithdrawalParties('staff');
+  if (t==='Deposit') { document.getElementById('f-amount').value=20; document.getElementById('f-cash').value=''; }
   autoSplit();
 }
 
@@ -26,10 +24,7 @@ function setPayType(t) {
 function autoSplit() {
   const total = parseFloat(document.getElementById('f-amount').value)||0;
   const cash = parseFloat(document.getElementById('f-cash').value)||0;
-  const tf = parseFloat(document.getElementById('f-transfer').value)||0;
-  if (cash===0&&tf===0) document.getElementById('f-transfer').value = total>0?total.toFixed(2):'';
-  else if (cash>0&&tf===0) document.getElementById('f-transfer').value = Math.max(0,total-cash).toFixed(2);
-  else if (tf>0&&cash===0) document.getElementById('f-cash').value = Math.max(0,total-tf).toFixed(2);
+  document.getElementById('f-transfer').value = total>0?Math.max(0,total-cash).toFixed(2):'';
 }
 
 function syncSplit(changed) {
@@ -37,17 +32,6 @@ function syncSplit(changed) {
   if (!total) return;
   if (changed==='cash') document.getElementById('f-transfer').value = Math.max(0,total-(parseFloat(document.getElementById('f-cash').value)||0)).toFixed(2);
   else document.getElementById('f-cash').value = Math.max(0,total-(parseFloat(document.getElementById('f-transfer').value)||0)).toFixed(2);
-}
-
-function syncWithdrawalParties(changed) {
-  const paidTo = document.getElementById('f-staff');
-  const paidFrom = document.getElementById('f-withdrawal-from');
-  if (!paidTo || !paidFrom || currentType !== 'Withdrawal') return;
-  if (changed === 'from') {
-    paidTo.value = paidFrom.value === 'Harnoor' ? 'Dikshi' : 'Harnoor';
-  } else {
-    paidFrom.value = paidTo.value === 'Harnoor' ? 'Dikshi' : 'Harnoor';
-  }
 }
 
 function clearForm() {
