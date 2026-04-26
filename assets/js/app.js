@@ -7,6 +7,7 @@ function toast(msg) {
 // ── INIT ──────────────────────────────────────
 document.getElementById('f-date').value = today();
 renderConfigBanners();
+renderSettings();
 setSyncStatus(API_URL?'connected':'disconnected', API_URL?'Showing cached data · syncing in background':undefined);
 const cached = localStorage.getItem('hd_nails_cache');
 if (cached) { try { DB=JSON.parse(cached); refreshAllViews(); } catch(e){} }

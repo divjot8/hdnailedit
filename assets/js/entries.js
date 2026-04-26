@@ -4,6 +4,7 @@ async function submitEntry() {
   const service=document.getElementById('f-service').value;
   let client=document.getElementById('f-client').value.trim();
   const staff=document.getElementById('f-staff').value, amount=parseFloat(document.getElementById('f-amount').value)||0;
+  const owner=type==='Expense'?document.getElementById('f-owner').value:staff;
   let cash=parseFloat(document.getElementById('f-cash').value)||0, tf=parseFloat(document.getElementById('f-transfer').value)||0;
   const note=document.getElementById('f-note').value.trim();
   if (type==='Withdrawal') {
@@ -23,7 +24,7 @@ async function submitEntry() {
     id:'HD'+Date.now(), date, type,
     payType: type==='Revenue'?payType:(type==='Withdrawal'?`Paid to ${staff}`:'-'),
     service: type==='Revenue'?service:'-',
-    client: client||'-', staff: ['Revenue','Withdrawal'].includes(type)?staff:'-',
+    client: client||'-', staff: ['Revenue','Withdrawal'].includes(type)?staff:'-', owner,
     amount:+amount.toFixed(2), cash:+Math.max(0,cash).toFixed(2), tf:+Math.max(0,tf).toFixed(2),
     note, month:normalizeMonthKey(date, date),
   };

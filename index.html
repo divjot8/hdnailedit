@@ -57,6 +57,10 @@
       <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       <span>Import Data</span>
     </div>
+    <div class="nav-item" onclick="nav('settings')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 01-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1A2 2 0 014.2 17l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1A2 2 0 017 4.2l.1.1a1.7 1.7 0 001.9.3h.1a1.7 1.7 0 001-1.6V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.6h.1a1.7 1.7 0 001.9-.3l.1-.1A2 2 0 0119.8 7l-.1.1a1.7 1.7 0 00-.3 1.9v.1a1.7 1.7 0 001.6 1h.1a2 2 0 010 4H21a1.7 1.7 0 00-1.6 1z"/></svg>
+      <span>Settings</span>
+    </div>
   </nav>
   <div class="sidebar-bottom">
     <div class="balance-pill">
@@ -141,11 +145,15 @@
       <div class="dash-row"><span class="dr-label">Harnoor — Revenue</span><span class="dr-val harnoor" id="d-h-rev">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Harnoor — Cash</span><span class="dr-val harnoor" id="d-h-cash">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Harnoor — Transfer</span><span class="dr-val harnoor" id="d-h-tf">$0.00</span></div>
+      <div class="dash-row"><span class="dr-label">Harnoor — Expenses (direct + share)</span><span class="dr-val harnoor" id="d-h-exp">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Withdrawn to Harnoor</span><span class="dr-val harnoor" id="d-h-with">$0.00</span></div>
+      <div class="dash-row total"><span class="dr-label">Harnoor — Net Profit</span><span class="dr-val" id="d-h-net">$0.00</span></div>
       <div class="dash-row dash-row-divider"><span class="dr-label">Dikshi — Revenue</span><span class="dr-val dikshi" id="d-d-rev">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Dikshi — Cash</span><span class="dr-val dikshi" id="d-d-cash">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Dikshi — Transfer</span><span class="dr-val dikshi" id="d-d-tf">$0.00</span></div>
+      <div class="dash-row"><span class="dr-label">Dikshi — Expenses (direct + share)</span><span class="dr-val dikshi" id="d-d-exp">$0.00</span></div>
       <div class="dash-row"><span class="dr-label">Withdrawn to Dikshi</span><span class="dr-val dikshi" id="d-d-with">$0.00</span></div>
+      <div class="dash-row total"><span class="dr-label">Dikshi — Net Profit</span><span class="dr-val" id="d-d-net">$0.00</span></div>
     </div>
   </div>
 
@@ -177,6 +185,7 @@
     <div class="form-grid">
       <div class="form-group"><label class="form-label">Date</label><input type="date" id="f-date" class="form-input"></div>
       <div class="form-group" id="fg-staff"><label class="form-label">Staff</label><select id="f-staff" class="form-select"><option>Harnoor</option><option>Dikshi</option></select></div>
+      <div class="form-group" id="fg-owner" style="display:none"><label class="form-label">Owner / Allocation</label><select id="f-owner" class="form-select"><option>Shared</option><option>Harnoor</option><option>Dikshi</option></select></div>
       <div class="form-group" id="fg-service"><label class="form-label">Service</label><select id="f-service" class="form-select"><option>Gel x</option><option>BIAB</option><option>BIAB infill</option><option>Gel x infill</option><option>Removal + set</option><option>Removal</option><option>Press ons</option><option>Gel mani</option><option>Repair</option><option>Other</option></select></div>
       <div class="form-group" id="fg-client"><label class="form-label" id="client-label">Client</label><input type="text" id="f-client" class="form-input" placeholder="Client name"></div>
       <div class="form-group form-full" id="fg-paytype"><label class="form-label">Payment type</label><div class="pay-toggle"><button class="pay-btn active" id="pay-full" onclick="setPayType('Full Payment')">Full Payment</button><button class="pay-btn" id="pay-dep" onclick="setPayType('Deposit')">Deposit</button></div></div>
@@ -229,7 +238,7 @@
 <!-- ═══ ACCOUNTANT ═══ -->
 <div id="page-accountant" class="page">
   <div class="page-header"><div class="page-title">Accountant Export</div><div class="page-subtitle">Clean export with cash/transfer split</div></div>
-  <div class="export-bar"><span class="eb-label">Full transaction history with cash and bank transfer split, ready for your accountant.</span><button class="btn-pink" onclick="exportExcel('accountant')">Export to Excel</button><button class="btn-secondary" onclick="exportExcel()">Full Ledger</button></div>
+  <div class="export-bar"><span class="eb-label">Accountant ledger excludes cash revenue and keeps all expenses, including cash-paid expenses.</span><button class="btn-pink" onclick="exportExcel('accountant')">Export Accountant Ledger</button><button class="btn-secondary" onclick="exportExcel()">Full Ledger</button></div>
   <div class="metric-grid metric-grid-4 metric-grid-compact">
     <div class="metric-card"><div class="mc-label">Transfer Revenue</div><div class="mc-value positive" id="acc-tf-rev">$0.00</div></div>
     <div class="metric-card"><div class="mc-label">Cash Revenue</div><div class="mc-value positive" id="acc-cash-rev">$0.00</div></div>
@@ -237,7 +246,7 @@
     <div class="metric-card"><div class="mc-label">Total Expenses</div><div class="mc-value negative" id="acc-total-exp">$0.00</div></div>
   </div>
   <div class="section-header"><div class="section-title">By month</div></div>
-  <div class="monthly-table-wrap monthly-table-compact"><table class="data-table"><thead><tr><th>Month</th><th class="td-right">Revenue</th><th class="td-right">Deposits</th><th class="td-right">Expenses</th><th class="td-right">Net</th><th class="td-right">Harnoor</th><th class="td-right">Dikshi</th></tr></thead><tbody id="acc-monthly-body"></tbody></table></div>
+  <div class="monthly-table-wrap monthly-table-compact"><table class="data-table"><thead><tr><th>Month</th><th class="td-right">Revenue</th><th class="td-right">Deposits</th><th class="td-right">Expenses</th><th class="td-right">Net</th><th class="td-right">Harnoor Rev</th><th class="td-right">Dikshi Rev</th><th class="td-right">Harnoor Exp</th><th class="td-right">Dikshi Exp</th></tr></thead><tbody id="acc-monthly-body"></tbody></table></div>
   <div class="section-header"><div class="section-title">Transfer transactions</div></div>
   <div class="table-wrap"><table class="data-table"><thead><tr><th>Date</th><th>Type</th><th>Service</th><th>Client / Supplier</th><th>Staff</th><th class="td-right">Transfer</th><th class="td-right">Total</th><th>Note</th></tr></thead><tbody id="acc-body"></tbody></table></div>
 </div>
@@ -281,6 +290,17 @@
       <button class="btn-secondary" onclick="cancelImport()">Cancel</button>
     </div>
     <div class="preview-table-wrap preview-table-import" id="preview-table-wrap"></div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div id="page-settings" class="page">
+  <div class="page-header"><div class="page-title">Settings</div><div class="page-subtitle">Expense split ratio</div></div>
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Harnoor %</label><input type="number" id="s-harnoor" class="form-input" min="0" max="100" step="1" onchange="saveSplitRatioFromSettings()"></div>
+      <div class="form-group"><label class="form-label">Dikshi %</label><input type="number" id="s-dikshi" class="form-input" min="0" max="100" step="1" onchange="saveSplitRatioFromSettings()"></div>
+    </div>
   </div>
 </div>
 

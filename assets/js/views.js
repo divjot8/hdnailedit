@@ -30,6 +30,15 @@ function staffBadge(s) {
   if(!s||s==='-')return'<span class="text-muted">—</span>';
   return`<span class="badge ${s==='Harnoor'?'badge-harnoor':'badge-dikshi'}">${s}</span>`;
 }
+function ownerForEntry(e) {
+  return e.owner || (e.type === 'Expense' ? 'Shared' : e.staff);
+}
+function expenseAllocation(e) {
+  const owner = ownerForEntry(e);
+  if (owner === 'Harnoor') return { harnoor: e.amount, dikshi: 0 };
+  if (owner === 'Dikshi') return { harnoor: 0, dikshi: e.amount };
+  return { harnoor: e.amount * splitRatio.harnoor, dikshi: e.amount * splitRatio.dikshi };
+}
 function partyText(e) {
   if (e.type === 'Withdrawal') return `HDNailedIt to ${e.staff || '-'}`;
   return e.client;
@@ -180,7 +189,7 @@ function drawMonthlyChart(monthly) {
 function refreshDashboard() {
   let cashHand=0,cashBank=0,totalWith=0;
   let pRev=0,pExp=0,fullTf=0,fullCash=0,deps=0,pEntries=0;
-  let hRev=0,hCash=0,hTf=0,hWith=0,dRev=0,dCash=0,dTf=0,dWith=0;
+  let hRev=0,hCash=0,hTf=0,hExp=0,hWith=0,dRev=0,dCash=0,dTf=0,dExp=0,dWith=0;
   const monthly={};
 
   DB.forEach(e => {
@@ -229,6 +238,9 @@ function refreshDashboard() {
       }
     } else if (e.type === 'Expense') {
       pExp += e.amount;
+      const allocation = expenseAllocation(e);
+      hExp += allocation.harnoor;
+      dExp += allocation.dikshi;
     } else if (e.type === 'Withdrawal') {
       if (e.staff === 'Harnoor') hWith += e.amount;
       if (e.staff === 'Dikshi') dWith += e.amount;
@@ -262,8 +274,16 @@ function refreshDashboard() {
   const dn = document.getElementById('d-net');
   dn.textContent = fmt(pNet);
   dn.className = 'dr-val ' + (pNet >= 0 ? 'pos' : 'neg');
-  ['d-h-rev','d-h-cash','d-h-tf','d-h-with'].forEach((id, i) => document.getElementById(id).textContent = fmt([hRev,hCash,hTf,hWith][i]));
-  ['d-d-rev','d-d-cash','d-d-tf','d-d-with'].forEach((id, i) => document.getElementById(id).textContent = fmt([dRev,dCash,dTf,dWith][i]));
+  const hNet = hRev - hExp - hWith;
+  const dNet = dRev - dExp - dWith;
+  ['d-h-rev','d-h-cash','d-h-tf','d-h-exp','d-h-with'].forEach((id, i) => document.getElementById(id).textContent = fmt([hRev,hCash,hTf,hExp,hWith][i]));
+  ['d-d-rev','d-d-cash','d-d-tf','d-d-exp','d-d-with'].forEach((id, i) => document.getElementById(id).textContent = fmt([dRev,dCash,dTf,dExp,dWith][i]));
+  const hNetEl = document.getElementById('d-h-net');
+  hNetEl.textContent = fmt(hNet);
+  hNetEl.className = 'dr-val ' + (hNet >= 0 ? 'pos' : 'neg');
+  const dNetEl = document.getElementById('d-d-net');
+  dNetEl.textContent = fmt(dNet);
+  dNetEl.className = 'dr-val ' + (dNet >= 0 ? 'pos' : 'neg');
 
   const months = Object.keys(monthly).sort().reverse().slice(0,12);
   document.getElementById('monthly-body').innerHTML = months.length
@@ -324,15 +344,40 @@ function renderAccountant() {
   DB.forEach(e=>{
     const monthKey = normalizeMonthKey(e.month, e.date);
     if(!monthKey)return;
-    if(!monthly[monthKey])monthly[monthKey]={rev:0,dep:0,exp:0,net:0,h:0,d:0};
+    if(!monthly[monthKey])monthly[monthKey]={rev:0,dep:0,exp:0,net:0,h:0,d:0,hExp:0,dExp:0};
     if(isRevenueEntry(e)){tfR+=e.tf;cR+=e.cash;tR+=e.amount;if(isDepositEntry(e))monthly[monthKey].dep+=e.amount;else monthly[monthKey].rev+=e.amount;if(e.staff==='Harnoor')monthly[monthKey].h+=e.amount;if(e.staff==='Dikshi')monthly[monthKey].d+=e.amount;}
-    else if(e.type==='Expense'){tE+=e.amount;monthly[monthKey].exp+=e.amount;}
+    else if(e.type==='Expense'){tE+=e.amount;monthly[monthKey].exp+=e.amount;const allocation=expenseAllocation(e);monthly[monthKey].hExp+=allocation.harnoor;monthly[monthKey].dExp+=allocation.dikshi;}
     monthly[monthKey].net=monthly[monthKey].rev+monthly[monthKey].dep-monthly[monthKey].exp;
   });
   document.getElementById('acc-tf-rev').textContent=fmt(tfR);document.getElementById('acc-cash-rev').textContent=fmt(cR);
   document.getElementById('acc-total-rev').textContent=fmt(tR);document.getElementById('acc-total-exp').textContent=fmt(tE);
   const months=Object.keys(monthly).sort().reverse();
-  document.getElementById('acc-monthly-body').innerHTML=months.length?months.map(m=>{const d=monthly[m];return`<tr><td><strong>${fmtMonth(m)}</strong></td><td class="td-right amount-positive">${fmt(d.rev)}</td><td class="td-right amount-deposit">${fmt(d.dep)}</td><td class="td-right amount-negative">${fmt(d.exp)}</td><td class="td-right"><strong class="${amountClass(d.net>=0)}">${fmt(d.net)}</strong></td><td class="td-right amount-negative">${fmt(d.h)}</td><td class="td-right amount-dikshi">${fmt(d.d)}</td></tr>`;}).join(''):'<tr><td colspan="7"><div class="empty-state"><div class="es-text">No data</div></div></td></tr>';
+  document.getElementById('acc-monthly-body').innerHTML=months.length?months.map(m=>{const d=monthly[m];return`<tr><td><strong>${fmtMonth(m)}</strong></td><td class="td-right amount-positive">${fmt(d.rev)}</td><td class="td-right amount-deposit">${fmt(d.dep)}</td><td class="td-right amount-negative">${fmt(d.exp)}</td><td class="td-right"><strong class="${amountClass(d.net>=0)}">${fmt(d.net)}</strong></td><td class="td-right amount-negative">${fmt(d.h)}</td><td class="td-right amount-dikshi">${fmt(d.d)}</td><td class="td-right amount-negative">${fmt(d.hExp)}</td><td class="td-right amount-dikshi">${fmt(d.dExp)}</td></tr>`;}).join(''):'<tr><td colspan="9"><div class="empty-state"><div class="es-text">No data</div></div></td></tr>';
   const ae=DB.filter(e=>e.tf>0||e.type==='Expense'||e.type==='Withdrawal');
   document.getElementById('acc-body').innerHTML=ae.length?ae.map(e=>`<tr><td class="td-mono">${fmtDate(e.date)}</td><td>${typeBadge(e.type)}</td><td class="text-secondary">${e.service==='-'?'—':e.service}</td><td>${partyText(e)}</td><td>${staffBadge(e.staff)}</td><td class="td-right td-mono">${e.tf>0?fmt(e.tf):'—'}</td><td class="td-right td-mono"><strong>${fmt(e.amount)}</strong></td><td class="note-cell">${e.note||''}</td></tr>`).join(''):'<tr><td colspan="8"><div class="empty-state"><div class="es-text">No transfer transactions</div></div></td></tr>';
+}
+
+function renderSettings() {
+  const h = document.getElementById('s-harnoor');
+  const d = document.getElementById('s-dikshi');
+  if (!h || !d) return;
+  h.value = Math.round(splitRatio.harnoor * 100);
+  d.value = Math.round(splitRatio.dikshi * 100);
+}
+
+function saveSplitRatioFromSettings() {
+  const hPct = parseFloat(document.getElementById('s-harnoor').value);
+  const dPct = parseFloat(document.getElementById('s-dikshi').value);
+  if (Number.isNaN(hPct) || Number.isNaN(dPct) || hPct < 0 || dPct < 0 || hPct > 100 || dPct > 100) {
+    toast('Split percentages must be between 0 and 100.');
+    renderSettings();
+    return;
+  }
+  if (Math.abs(hPct + dPct - 100) > 0.01) {
+    toast('Harnoor and Dikshi percentages must add to 100.');
+    return;
+  }
+  saveSplitRatio(hPct / 100, dPct / 100);
+  refreshAllViews();
+  toast('Split ratio saved.');
 }

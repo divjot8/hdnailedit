@@ -220,7 +220,7 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(180deg,#fbfaf8 
   .main{height:100dvh;overflow-y:auto;padding-bottom:calc(82px + var(--safe-bottom))}
   .sidebar{position:fixed;left:10px;right:10px;bottom:calc(10px + var(--safe-bottom));top:auto;width:auto;min-width:0;height:64px;z-index:300;display:block;overflow:visible;padding:0;background:rgba(17,17,17,0.86);border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 18px 44px rgba(17,17,17,0.28);backdrop-filter:blur(20px)}
   .sidebar-logo,.nav-section-label,.sidebar-bottom{display:none}
-  .sidebar-nav{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;height:100%;padding:6px}
+  .sidebar-nav{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;height:100%;padding:6px}
   .nav-item{justify-content:center;align-items:center;padding:0;border-left:none;border-radius:17px;min-width:0;color:rgba(255,255,255,0.58)}
   .nav-item.active{border-left-color:transparent;background:rgba(255,255,255,0.13);color:var(--white)}
   .nav-item span{display:none}

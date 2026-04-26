@@ -50,6 +50,8 @@ function parseHDSheet(rows, sheetName, existingIds, logEl) {
   let parsed=0, skipped=0, dups=0;
   const entries = [];
   let currentDate = null;
+  const headerRow = rows.find(row => row.some(cell => /^owner$|owner\s*\/\s*allocation/i.test((cell||'').toString().trim())));
+  const ownerIndex = headerRow ? headerRow.findIndex(cell => /^owner$|owner\s*\/\s*allocation/i.test((cell||'').toString().trim())) : -1;
 
   rows.forEach((row, rowIdx) => {
     try {
@@ -154,6 +156,8 @@ function parseHDSheet(rows, sheetName, existingIds, logEl) {
       // also check col5 for "H" or "D" shorthand
       if (staff==='-' && /^h(\s|$|\d)/i.test(col5)) staff='Harnoor';
       if (staff==='-' && /^d(\s|$|\d)/i.test(col5)) staff='Dikshi';
+      const importedOwner = ownerIndex >= 0 ? normaliseOwner(row[ownerIndex]) : '';
+      const owner = type === 'Expense' ? (importedOwner || 'Shared') : staff;
 
       // Service from col1
       const service = normaliseService(col1);
@@ -171,7 +175,7 @@ function parseHDSheet(rows, sheetName, existingIds, logEl) {
         id: 'IMP'+Date.now()+'_'+rowIdx+Math.random().toString(36).slice(2,6),
         date: currentDate, type, payType,
         service: type==='Expense'?'Supplies':service,
-        client, staff,
+        client, staff, owner,
         amount:+amount.toFixed(2), cash:+Math.max(0,cash).toFixed(2), tf:+Math.max(0,tf).toFixed(2),
         note, month,
       };
@@ -185,6 +189,14 @@ function parseHDSheet(rows, sheetName, existingIds, logEl) {
 
   log(logEl, `  ✓ Parsed ${parsed} entries, ${skipped} rows skipped, ${dups} duplicates ignored`, parsed>0?'ok':'warn');
   return { entries, parsed, skipped, dups };
+}
+
+function normaliseOwner(raw) {
+  const text = (raw||'').toString().trim();
+  if (/^harnoor$/i.test(text)) return 'Harnoor';
+  if (/^dikshi$/i.test(text)) return 'Dikshi';
+  if (/^shared$/i.test(text)) return 'Shared';
+  return '';
 }
 
 function parseFlexDate(str) {

@@ -11,7 +11,13 @@ let currentType = 'Revenue';
 let currentPayType = 'Full Payment';
 let dashPeriod = 'thisMonth';
 let xlsxLoadPromise = null;
+let splitRatio = JSON.parse(localStorage.getItem('hd_split_ratio')) || { harnoor: 0.5, dikshi: 0.5 };
 const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+function saveSplitRatio(h, d) {
+  splitRatio = { harnoor: h, dikshi: d };
+  localStorage.setItem('hd_split_ratio', JSON.stringify(splitRatio));
+}
 
 function normalizeMonthKey(monthValue, dateValue) {
   const monthText = typeof monthValue === 'string' ? monthValue.trim() : '';

@@ -1,10 +1,13 @@
 // ── FORM ──────────────────────────────────────
 function setEntryType(t) {
+  const previousType = currentType;
   currentType = t;
   document.querySelectorAll('.type-tab').forEach((b,i) => b.classList.toggle('active',['Revenue','Expense','Withdrawal'][i]===t));
   const si = t==='Revenue';
   const isWithdrawal = t==='Withdrawal';
   document.getElementById('fg-staff').style.display   = si||isWithdrawal?'':'none';
+  document.getElementById('fg-owner').style.display   = t==='Expense'?'':'none';
+  if (t === 'Expense' && previousType !== 'Expense') document.getElementById('f-owner').value = 'Shared';
   document.querySelector('#fg-staff .form-label').textContent = isWithdrawal?'Paid to':'Staff';
   document.getElementById('fg-service').style.display = si?'':'none';
   document.getElementById('fg-client').style.display  = isWithdrawal?'none':'';
@@ -36,6 +39,7 @@ function syncSplit(changed) {
 function clearForm() {
   document.getElementById('f-date').value = today();
   ['f-client','f-amount','f-cash','f-transfer','f-note'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-owner').value = 'Shared';
   setEntryType('Revenue'); setPayType('Full Payment');
 }
 

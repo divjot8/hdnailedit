@@ -9,6 +9,7 @@ function nav(page) {
   if (page==='ledger')     renderLedger();
   if (page==='cash')       renderCashLedger();
   if (page==='accountant') renderAccountant();
+  if (page==='settings')   renderSettings();
   if (page==='dashboard')  refreshDashboard();
   if (page==='import')     ensureXlsx().catch(()=>{});
   if (API_URL && page !== 'import') loadData(true);
